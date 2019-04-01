@@ -165,7 +165,6 @@ class Solution:
 # 二分排序解法：
 class Solution:
     def minNumberInRotateArray(self, rotateArray):
-        # write code here
         if len(rotateArray) == 0:
             return 0
         left = 0
