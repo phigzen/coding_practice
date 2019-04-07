@@ -321,4 +321,30 @@ class Solution:
         return 2**(number-1)
 ```
 
-# 10. 
+# 10. 矩形覆盖
+
+我们可以用2\*1的小矩形横着或者竖着去覆盖更大的矩形。请问用n个2*1的小矩形无重叠地覆盖一个2*n的大矩形，总共有多少种方法？
+
+思路：同样也是斐波那契数列问题，第一个位置可以横着放，也可以竖着放，对应剩下的位置分别有f(n-1)和f(n-2)种放法。则f(n)=f(n-1)+f(n-2)
+
+```cpp
+class Solution {
+public:
+    int rectCover(int number) {
+        if(number<=3){
+            return number;
+        }
+        int fn_2=2,fn_1=3,fn=0;
+        while(number>3){
+            fn=fn_1+fn_2;
+            fn_2=fn_1;
+            fn_1=fn;
+            number--;
+        }
+        return fn;
+    }
+};
+```
+
+# 11. 二进制中1的个数
+输入一个整数，输出该数二进制表示中1的个数。其中负数用补码表示。
