@@ -247,4 +247,52 @@ public:
     }
 };
 ```
+# 8. 跳台阶
+一只青蛙一次可以跳上1级台阶，也可以跳上2级。求该青蛙跳上一个n级的台阶总共有多少种跳法（先后次序不同算不同的结果）。
 
+思路：假设有n个台阶，跳法为f(n)。n=1时，f(n)=1，n=2时，f(n)=1，n>2时，如果第一次跳1级，剩余的有f(n-1)种跳法，如果第一次跳2级，剩余的有f(n-2)种跳法，可见这就是个斐波那契问题。
+- Python
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def jumpFloor(self, number):
+        a,b=0,1
+        while number > 0:
+            c=a+b 
+            a,b=b,c 
+            number-=1
+        return c
+```
+- C++
+```cpp
+class Solution {
+public:
+    int jumpFloor(int n) {
+        int f=1,g=2;
+        n--;
+        while(n--)
+        {
+            g+=f;
+            f=g-f;
+        }
+        return f;
+    }
+};
+//////////////////////////////
+class Solution {
+public:
+    int jumpFloor(int number) {
+        if(number<4){
+            return number;
+        }
+        int a=2, b=3, c=0;
+        for(int i=4;i<=number;i++){
+            c=a+b;
+            a=b; 
+            b=c; 
+        }
+        return c;
+    }
+};
+
+```
