@@ -376,7 +376,7 @@ class Solution:
 如果base为0，exponent<=0会报错；
 其他情况需要讨论exponent的正负。
 
-python中的等于没有误差：
+由于计算机中表示小数（float和double）都会有误差，我们不能直接用==来判断它们是否相等，可以通过比较它们之间的差的绝对值是否为一个极小值（如0.0000001）来判断它们是否相等。但是python中的等于没有误差，可以直接使用：
 ```python
 class Solution:
     def Power(self, base, exponent):
@@ -391,4 +391,79 @@ class Solution:
         if flag == 1:
             result = 1 / result
         return result
+```
+
+# 13. 调整数组顺序使奇数位于偶数前面
+
+输入一个整数数组，实现一个函数来调整该数组中数字的顺序，使得所有的奇数位于数组的前半部分，所有的偶数位于数组的后半部分，并保证奇数和奇数，偶数和偶数之间的相对位置不变。
+
+python常规解法1，利用两个列表来存储奇数和偶数，然后再拼接：
+```python
+class Solution:
+    def reOrderArray(self, array):
+        odd_lst=[]
+        even_lst=[]
+        for ele in array:
+            if ele%2==0:
+                even_lst.append(ele)
+            else:
+                odd_lst.append(ele)
+        final_arr = odd_lst+even_lst
+        return final_arr
+
+# 简洁版：
+def reOrderArray(self, array):
+        # write code here
+        odd,even=[],[]
+        for i in array:
+            odd.append(i) if i%2==1 else even.append(i)
+        return odd+even
+```
+python常规解法2，从后往前遍历奇数，从前往后遍历偶数，然后利用双向队列来存储：
+```python
+from collections import deque
+class Solution:
+    def reOrderArray(self, array):
+        odd = deque()
+        l = len(array)
+        for i in range(l):
+            if array[-i-1] % 2 != 0:
+                odd.appendleft(array[-i-1])
+            if array[i] % 2 == 0:
+                odd.append(array[i])
+        return list(odd)
+```
+当然也可以用列表来存储，利用insert方法将后向遍历的奇数插到列表的开头。
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def reOrderArray(self, array):
+        res = []
+        l = len(array)
+        for i in range(l):
+            if array[-i-1] % 2 != 0:
+                res.insert(0,array[-i-1])
+            if array[i] % 2 == 0:
+                res.append(array[i])
+        return res
+```
+python解法3，不开辟新空间：
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def reOrderArray(self, array):
+        # write code here
+        boarder = -1
+        for idx in range(len(array)):
+            if array[idx] % 2:
+                boarder += 1
+                array.insert(boarder, array.pop(idx))
+        return array
+
+# 用sorted()结合key参数：
+# -*- coding:utf-8 -*-
+class Solution:
+    def reOrderArray(self, array):
+        # write code here
+        return sorted(array,key=lambda c:c%2,reverse=True)
 ```
