@@ -467,3 +467,26 @@ class Solution:
         # write code here
         return sorted(array,key=lambda c:c%2,reverse=True)
 ```
+
+# 14. 链表中倒数第k个结点
+输入一个链表，输出该链表中倒数第k个结点。
+
+思路：利用两个指针，让它们之间的距离为k，则当前面的指针到达末尾时候，另一个指针对应的即为倒数第k个节点。但是注意要考虑好各种边界条件。
+
+```python
+class Solution:
+    def FindKthToTail(self, head, k):
+        if (head is None) or (k == 0):
+            return None
+        a = head
+        b = head
+        for i in range(k-1):
+            if a.next is None:
+                return None
+            else:
+                a = a.next
+        while (a.next is not None):
+            a = a.next
+            b = b.next
+        return b
+```
