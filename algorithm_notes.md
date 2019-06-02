@@ -57,14 +57,14 @@ class Solution:
 
 解释：
 
-- NLR（根左右）：前序遍历(Preorder Traversal 亦称（先序遍历））
+- **NLR（根左右）**：前序遍历(Preorder Traversal 亦称（先序遍历））
 ——访问根结点的操作发生在遍历其左右子树之前。
-- LNR（左根右）：中序遍历(Inorder Traversal)
+- **LNR（左根右）**：中序遍历(Inorder Traversal)
 ——访问根结点的操作发生在遍历其左右子树之中（间）。
-- LRN（左右根）：后序遍历(Postorder Traversal)
+- **LRN（左右根）**：后序遍历(Postorder Traversal)
 ——访问根结点的操作发生在遍历其左右子树之后。
 
-注意：由于被访问的结点必是某子树的根，所以N(Node）、L(Left subtree）和R(Right subtree）又可解释为根、根的左子树和根的右子树。NLR、LNR和LRN分别又称为先根遍历、中根遍历和后根遍历。
+注意：由于被访问的结点必是某子树的根，所以**N(Node）**、**L(Left subtree）**和**R(Right subtree）**又可解释为根、根的左子树和根的右子树。NLR、LNR和LRN分别又称为先根遍历、中根遍历和后根遍历。
 
 
 ```python
@@ -93,7 +93,7 @@ class Solution:
 用两个栈来实现一个队列，完成队列的Push和Pop操作。 队列中的元素为int类型。
 
 解释：
-1.栈(stacks)是一种只能通过访问其一端来实现数据存储与检索的线性数据结构，具有后进先出(last in first out，LIFO)的特征。python列表方法使得列表作为堆栈非常容易，最后一个插入，最先取出（“后进先出”）。要添加一个元素到堆栈的顶端，使用 append() 。要从堆栈顶部取出一个元素，使用 pop() ，不用指定索引。
+1.栈(stacks)是一种只能通过访问其一端来实现数据存储与检索的线性数据结构，具有后进先出(last in first out，LIFO)的特征。python列表方法使得列表作为堆栈非常容易，最后一个插入，最先取出（“后进先出”）。要添加一个元素到堆栈的顶端，使用`append()` 。要从堆栈顶部取出一个元素，使用 `pop()` ，不用指定索引。
 
 ```python
 >>> stack = [3, 4, 5]
@@ -728,4 +728,105 @@ class Solution:
 
 # 21. 栈的压入、弹出序列
 输入两个整数序列，第一个序列表示栈的压入顺序，请判断第二个序列是否可能为该栈的弹出顺序。假设压入栈的所有数字均不相等。例如序列1,2,3,4,5是某栈的压入顺序，序列4,5,3,2,1是该压栈序列对应的一个弹出序列，但4,3,5,1,2就不可能是该压栈序列的弹出序列。（注意：这两个序列的长度是相等的）
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def IsPopOrder(self, pushV, popV):
+        # write code here
+        stack_ = []
+        for i in pushV:
+            stack_.append(i)
+            while stack_ and stack_[-1] == popV[0]:
+                stack_.pop()
+                popV.pop(0)
+        if stack_:
+            return False
+        return True
+```
+
+![image-20190602192939687](pics/image-20190602192939687.png)
+
+![image-20190602192951826](pics/image-20190602192951826.png)
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+ 
+    def IsPopOrder(self, pushV, popV):
+        # stack中存入pushV中取出的数据
+        stack=[]
+        while popV:
+            # 如果第一个元素相等，直接都弹出，根本不用压入stack
+            if pushV and popV[0]==pushV[0]:
+                popV.pop(0)
+                pushV.pop(0)
+            #如果stack的最后一个元素与popV中第一个元素相等，将两个元素都弹出
+            elif stack and stack[-1]==popV[0]:
+                stack.pop()
+                popV.pop(0)
+            # 如果pushV中有数据，压入stack
+            elif pushV:
+                stack.append(pushV.pop(0))
+            # 上面情况都不满足，直接返回false。
+            else:
+                return False
+        return True
+```
+
+# 22. 从上往下打印二叉树
+
+从上往下打印出二叉树的每个节点，同层节点从左至右打印。
+
+思路：其实就是广度优先遍历二叉树。可以借助于一个队列实现。每次打印一个节点，并判断该节点的左右节点是否存在，如果存在则将它们依次放入队列的尾部，并从队列的头部开始重复上述操作。
+
+不论是广度优先遍历一个有向图还是一棵树，都要用到队列。首先把起始节点(根节点)放入队列，接下来每次从队列的头部取出一个节点，遍历该节点后把这个节点都能到达的节点（子节点）依次放入队列，重复该过程直到队列中的所有节点都被遍历为止。
+
+```python
+# -*- coding:utf-8 -*-
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+class Solution:
+    # 返回从上到下每个节点值列表，例：[1,2,3]
+    def PrintFromTopToBottom(self, root):
+        # write code here
+        result = []
+        if root is None:
+            return result
+        queue = [root]
+        while queue:
+            cur = queue.pop(0)
+            result.append(cur.val)
+            if cur.left:
+                queue.append(cur.left)
+            if cur.right:
+                queue.append(cur.right)
+        return result
+    
+```
+
+# 23. 二叉搜索树的后序遍历序列
+
+输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历的结果。如果是则输出Yes,否则输出No。假设输入的数组的任意两个数字都互不相同。
+
+思路：
+
+> 二叉查找树（Binary Search Tree），（又：二叉搜索树，二叉排序树）它或者是一棵空树，或者是具有下列性质的二叉树： 若它的左子树不空，则左子树上所有结点的值均小于它的根结点的值； 若它的右子树不空，则右子树上所有结点的值均大于它的根结点的值； 它的左、右子树也分别为二叉排序树。          
+>
+> --baidu百科
+
+```python
+
+
+
+
+```
+
+
+
+
+
+
 
