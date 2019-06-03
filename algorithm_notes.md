@@ -57,12 +57,11 @@ class Solution:
 
 解释：
 
-- **NLR（根左右）**：前序遍历(Preorder Traversal 亦称（先序遍历））
-——访问根结点的操作发生在遍历其左右子树之前。
-- **LNR（左根右）**：中序遍历(Inorder Traversal)
-——访问根结点的操作发生在遍历其左右子树之中（间）。
-- **LRN（左右根）**：后序遍历(Postorder Traversal)
-——访问根结点的操作发生在遍历其左右子树之后。
+- **前序遍历(Preorder Traversal )**：NLR（根左右），访问根结点的操作发生在遍历其左右子树之前。
+- **中序遍历(Inorder Traversal)**：LNR（左根右），访问根结点的操作发生在遍历其左右子树之中（间）。
+- **后序遍历(Postorder Traversal)**：LRN（左右根），访问根结点的操作发生在遍历其左右子树之后。
+
+![img](pics/ab103822e75b5b15c615b68560cb2416.jpg)
 
 注意：由于被访问的结点必是某子树的根，所以**N(Node）**、**L(Left subtree）**和**R(Right subtree）**又可解释为根、根的左子树和根的右子树。NLR、LNR和LRN分别又称为先根遍历、中根遍历和后根遍历。
 
@@ -817,14 +816,71 @@ class Solution:
 >
 > --baidu百科
 
+二叉搜索树的后序遍历序列中，最后一个数字是树的根节点 ，数组中前面的数字可以分为两部分：第一部分是左子树节点 的值，都比根节点的值小；第二部分是右子树节点的值，都比根节点的值大，可用递归分别判断前后两部分是否符合以上原则。
+
 ```python
 
-
-
+# -*- coding:utf-8 -*-
+class Solution:
+    def VerifySquenceOfBST(self, sequence):
+        # write code here
+        if not len(sequence):
+            return False
+        if len(sequence) == 1:
+            return True
+        length = len(sequence)
+        # 最后一个是根节点
+        root = sequence[-1]
+        i = 0
+        # 遍历序列，寻找左右子树分界点
+        while sequence[i] < root:
+            i = i + 1
+        k = i # 右树的起点
+        # 根节点右侧子树应该都比根节点值大，如果小则返回False
+        for j in range(i, length-1):
+            if sequence[j] < root: 
+                return False
+        left_tree_s = sequence[:k] # 左树序列
+        right_tree_s = sequence[k:length-1] # 右树序列
+        left, right = True, True
+        if len(left_tree_s) > 0:
+            left = self.VerifySquenceOfBST(left_tree_s)
+        if len(right_tree_s) > 0:
+            right = self.VerifySquenceOfBST(right_tree_s)
+        return left and right
 
 ```
 
+```python
+class Solution:
+    def VerifySquenceOfBST(self, sequence):
+        # write code here
+        if sequence is None or len(sequence)==0:
+            return False
+        length=len(sequence)
+        root=sequence[-1]
+        # 在二叉搜索 树中 左子树节点小于根节点
+        for i in range(length):
+            if sequence[i]>root:
+                break
+        # 二叉搜索树中右子树的节点都大于根节点
+        for j  in range(i,length):
+            if sequence[j]<root:
+                return False
+        # 判断左子树是否为二叉树
+        left=True
+        if  i>0:
+            left=self.VerifySquenceOfBST(sequence[0:i])
+        # 判断 右子树是否为二叉树
+        right=True
+        if i<length-1:
+            right=self.VerifySquenceOfBST(sequence[i:-1])
+        return left and right
+```
 
+# 24. 二叉树中和为某一值的路径
+
+输入一颗二叉树的跟节点和一个整数，打印出二叉树中结点值的和为输入整数的所有路径。路径定义为从树的根结点开始往下一直到叶结点所经过的结点形成一条路径。(注意: 在返回值的list中，数组长度大的数组靠前)
 
 
 
