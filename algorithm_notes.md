@@ -1,4 +1,11 @@
+## Python first！！！
+
+## THEN CPP ！！！
+
+## Focus on ！！！
+
 # 1. 二维数组中的查找
+
 在一个二维数组中（每个一维数组的长度相同），每一行都按照从左到右递增的顺序排序，每一列都按照从上到下递增的顺序排序。请完成一个函数，输入这样的一个二维数组和一个整数，判断数组中是否含有该整数。
 
 ```python
@@ -878,11 +885,174 @@ class Solution:
         return left and right
 ```
 
-# 24. 二叉树中和为某一值的路径
+# ?24. 二叉树中和为某一值的路径
 
 输入一颗二叉树的跟节点和一个整数，打印出二叉树中结点值的和为输入整数的所有路径。路径定义为从树的根结点开始往下一直到叶结点所经过的结点形成一条路径。(注意: 在返回值的list中，数组长度大的数组靠前)
 
+```python
+# -*- coding:utf-8 -*-
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+class Solution:
+    # 返回二维列表，内部每个列表表示找到的路径
+    def FindPath(self, root, expectNumber):
+        # write code here
+        if root is None:
+            return []
+        if (root.left is None) and (root.right is None) and (expectNumber == root.val):
+            return [[root.val]]
+        result = []
+        left = self.FindPath(root.left, expectNumber-root.val)
+        right = self.FindPath(root.right, expectNumber-root.val)
+        for i in left+right:
+            result.append([root.val]+i)
+        return result
+```
+
+```python
+# -*- coding:utf-8 -*-
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+class Solution:
+    # 返回二维列表，内部每个列表表示找到的路径
+    def FindPath(self, root, expectNumber):
+        # write code here
+        if not root:
+            return []
+        result = []
+        def FindPathMain(root, path, currentSum):
+            currentSum += root.val
+            path.append(root)
+            isLeaf = (root.left is None) and (root.right is None)
+            if (currentSum == expectNumber) and isLeaf:
+                onePath = []
+                for node in path:
+                    onePath.append(node.val)
+                result.append(onePath)
+            if currentSum < expectNumber:
+                if root.left:
+                    FindPathMain(root.left, path, currentSum)
+                if root.right:
+                    FindPathMain(root.right, path, currentSum)
+            path.pop()
+        FindPathMain(root, [], 0)
+        return result
+```
+
+# ?25. 复杂链表的复制
+
+输入一个复杂链表（每个节点中有节点值，以及两个指针，一个指向下一个节点，另一个特殊指针指向任意一个节点），返回结果为复制后复杂链表的head。（注意，输出结果中请不要返回参数中的节点引用，否则判题程序会直接返回空）
+
+第一步，复制原始链表。![image-20190604094825820](pics/image-20190604094825820.png)
+
+![image-20190604093417728](pics/image-20190604093417728.png)
+
+```python
+# -*- coding:utf-8 -*-
+# class RandomListNode:
+#     def __init__(self, x):
+#         self.label = x
+#         self.next = None
+#         self.random = None
+class Solution:
+    # 返回 RandomListNode
+    def Clone(self, pHead):
+        if pHead is None:
+            return None
+        temp = pHead
+        # first step: copy nodes except random nodes
+        while temp:
+            tempnext = temp.next
+            copynode = RandomListNode(temp.label)
+            copynode.next = tempnext
+            temp.next = copynode
+            temp = tempnext
+        temp = pHead # back the Head
+        # second step: copy random
+        while temp:
+            temprandom = temp.random
+            copynode = temp.next
+            if temprandom:
+                copynode.random = temprandom.next
+            temp = copynode.next
+        # third step: split
+        temp = pHead # back the Head
+        copyHead = pHead.next
+        while temp:
+            copyNode = temp.next
+            tempnext = copyNode.next
+            temp.next = tempnext
+            if tempnext:
+                copyNode.next = tempnext.next
+            else:
+                copyNode.next = None
+            temp = tempnext
+        return copyHead
+```
+
+递归法：
+
+```python
+# -*- coding:utf-8 -*-
+# class RandomListNode:
+#     def __init__(self, x):
+#         self.label = x
+#         self.next = None
+#         self.random = None
+class Solution:
+    def Clone(self, head):
+        if not head: return
+        newNode = RandomListNode(head.label)
+        newNode.random = head.random
+        newNode.next = self.Clone(head.next)
+        return newNode
+```
+
+哈希表：
+
+```python
+# -*- coding:utf-8 -*-
+# class RandomListNode:
+#     def __init__(self, x):
+#         self.label = x
+#         self.next = None
+#         self.random = None
+
+class Solution:
+    def Clone(self, head):
+        nodeList = []     # 存放各个节点
+        randomList = []   # 存放各个节点指向的random节点。没有则为None
+        labelList = []    # 存放各个节点的值
+        while head: # 将链表转换为列表
+            randomList.append(head.random)
+            nodeList.append(head)
+            labelList.append(head.label)
+            head = head.next
+        # 获取random节点的索引，如果没有则为-1   
+        labelIndexList = map(lambda c: nodeList.index(c) if c else -1, randomList)
+        dummy = RandomListNode(0)
+        pre = dummy
+        # 节点列表，只要把这些节点的random设置好，顺序串起来就ok了。
+        nodeList=map(lambda c:RandomListNode(c),labelList)
+        #把每个节点的random绑定好，根据对应的index来绑定
+        for i in range(len(nodeList)):
+            if labelIndexList[i]!=-1:
+                nodeList[i].random=nodeList[labelIndexList[i]]
+        for i in nodeList:
+            pre.next=i
+            pre=pre.next
+        return dummy.next
+```
 
 
 
+# 26. 二叉搜索树与双向列表
+
+输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的双向链表。要求不能创建任何新的结点，只能调整树中结点指针的指向。
 
