@@ -1007,7 +1007,8 @@ class Solution:
 #         self.random = None
 class Solution:
     def Clone(self, head):
-        if not head: return
+        if head is None: 
+          return None
         newNode = RandomListNode(head.label)
         newNode.random = head.random
         newNode.next = self.Clone(head.next)
@@ -1052,7 +1053,58 @@ class Solution:
 
 
 
-# 26. 二叉搜索树与双向列表
+# ?26. 二叉搜索树与双向列表
 
 输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的双向链表。要求不能创建任何新的结点，只能调整树中结点指针的指向。
+
+```python
+# -*- coding:utf-8 -*-
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+class Solution:
+    def Convert(self, pRootOfTree):
+        if pRootOfTree is None:
+            return None
+        p = pRootOfTree
+        stack = []
+        resStack = []
+        while p or stack:
+            if p:
+                stack.append(p)
+                p = p.left
+            else:
+                node = stack.pop()
+                resStack.append(node)
+                p = node.right
+        resP = resStack[0]
+        while resStack:
+            top = resStack.pop(0)
+            if resStack:
+                top.right = resStack[0]
+                resStack[0].left = top
+        return resP
+```
+
+```python
+class Solution:
+    def Convert(self, pRootOfTree):
+        # write code here
+        if not pRootOfTree:return
+        self.arr = []
+        self.midTraversal(pRootOfTree)
+        for i,v in enumerate(self.arr[:-1]):
+            v.right = self.arr[i+1]
+            self.arr[i + 1].left = v
+        return self.arr[0]
+    
+    def midTraversal(self, root):
+        if root is None: 
+            return None
+        self.midTraversal(root.left)
+        self.arr.append(root)
+        self.midTraversal(root.right)
+```
 
