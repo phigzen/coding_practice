@@ -1145,7 +1145,7 @@ class Solution:
             return root
 ```
 
-# 27. 字符串的排列
+# ??27. 字符串的排列
 
 题目描述：输入一个字符串，按字典序打印出该字符串中字符的所有排列。例如输入字符串abc, 则打印出由字符a, b, c所能排列出来的所有字符串abc, acb, bac, bca, cab和cba。
 
@@ -1160,10 +1160,52 @@ class Solution:
             return ss
         for i in range(len(ss)):
             for n in map(lambda x: x+ss[i], self.Permutation(ss[:i]+ss[i+1:])):
-                print(i,' ',n)
                 if n not in result:
                     result.append(n)
-        print(result)
         return sorted(result)
+```
+
+![image-20190605085920705](pics/image-20190605085920705.png)
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def Permutation(self, ss):
+        # write code here
+        if not ss:
+            return []
+        if len(ss) <= 1:
+            return [ss]
+        result = []
+        # 遍历字符串，固定第一个元素，然后递归求解
+        for i in range(len(ss)):
+            for j in self.Permutation(ss[:i]+ss[i+1:]):
+                result.append(ss[i]+j)
+        # 通过set进行去重，sorted进行重新排序
+        return sorted(list(set(result))) 
+```
+
+# 28. 数组中出现次数超过一半的数字
+
+数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。例如输入一个长度为9的数组{1,2,3,2,2,2,5,4,2}。由于数字2在数组中出现了5次，超过数组长度的一半，因此输出2。如果不存在则输出0。
+
+常规写法：对于列表中的元素取不重复的集合，然后遍历统计，如果某个元素超过了列表长度的一半则返回。
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def MoreThanHalfNum_Solution(self, numbers):
+        # write code here
+        ident = list(set(numbers))
+        length = len(numbers)
+        half_threshold = length//2+1
+        for ident_i in ident:
+            count = 0
+            for num_i in numbers:
+                if num_i == ident_i:
+                    count += 1
+            if count >= half_threshold:
+                return ident_i
+        return 0
 ```
 
