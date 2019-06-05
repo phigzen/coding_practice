@@ -96,6 +96,211 @@ void postOrder(Node* root) {
 
 写递归代码的关键就是找到如何将大问题分解为小问题的规律，并且基于此写出递推公式，然后再推敲终止条件，最后将递推公式和终止条件翻译成代码。
 
+# 排序
+
+#### 1. [快速排序](https://www.geeksforgeeks.org/python-program-for-quicksort/)
+
+Pseudo Code: 
+
+```c++
+/* low  --> Starting index,  high  --> Ending index */
+quickSort(arr[], low, high)
+{
+    if (low < high)
+    {
+        /* pi is partitioning index, arr[pi] is now
+           at right place */
+        pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);  // Before pi
+        quickSort(arr, pi + 1, high); // After pi
+    }
+}
+```
+
+以最后一个元素作为 pivot（分区点），比它大的放在其后，比它小的放在之前，然后递归。
+
+![image-20190605110323981](pics/image-20190605110323981.png)
+
+
+
+partition具体过程（如果要申请额外空间）：![image-20190605110750318](pics/image-20190605110750318.png)
+
+对于不申请额外空间的做法：
+
+Pseudo Code: 
+
+```C++
+partition(A, p, r) {
+  pivot = A[r]
+  i = p
+  for j = p to r-1 do {
+    if A[j] < pivot {
+      swap A[i] with A[j]
+      i = i+1
+    }
+  }
+  swap A[i] with A[r]
+  return i
+```
+
+核心思想是，遍历pivot之前的元素，如果小于pivot则将元素与arr[i]互换（arr[i]之前表示已处理）。以下标i为分割点，i之前表示已经处理过，到最后一步互换arr[i]和pivot即可。在代码中需要要注意索引的位置。如下图：![image-20190605114322757](pics/image-20190605114322757.png)
+
+```python
+# Python program for implementation of Quicksort Sort
+
+# This function takes last element as pivot, places
+# the pivot element at its correct position in sorted
+# array, and places all smaller (smaller than pivot)
+# to left of pivot and all greater elements to right
+# of pivot
+
+def partition(arr, low, high):
+    i = (low - 1)  # index of smaller element
+    pivot = arr[high]  # pivot
+    for j in range(low, high):
+        # If current element is smaller than or equal to pivot
+        if arr[j] <= pivot:
+            # increment index of smaller element
+            i = i + 1
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    return (i + 1)
+
+# The main function that implements QuickSort
+# arr[] --> Array to be sorted,
+# low --> Starting index,
+# high --> Ending index
+
+# Function to do Quick sort
+def quickSort(arr, low, high):
+    if low < high:
+        # pi is partitioning index, arr[p] is now
+        # at right place
+        pi = partition(arr, low, high)
+        # Separately sort elements before
+        # partition and after partition
+        quickSort(arr, low, pi - 1)
+        quickSort(arr, pi + 1, high)
+
+if __name__ == '__main__':
+    # Driver code to test above
+    arr = [8, 10, 2, 3, 6, 1, 5]
+    n = len(arr)
+    quickSort(arr, 0, n - 1)
+    print("Sorted array is:")
+    print(arr)
+    # [1, 2, 3, 5, 6, 8, 10]
+```
+
+#### python实现的各种排序：
+
+```python
+# 方法一：内置的sort()和sorted()
+# 方法二：快速排序
+# -*- coding:utf-8 -*-
+def quick_sort(lst):
+    if not lst:
+        return []
+    pivot = lst[0]
+    left = quick_sort([x for x in lst[1: ] if x < pivot])
+    right = quick_sort([x for x in lst[1: ] if x >= pivot])
+    return left + [pivot] + right
+
+# 方法三：归并排序
+# -*- coding:utf-8 -*-
+def merge_sort(lst):
+    if len(lst) <= 1:
+        return lst
+    mid = len(lst) // 2
+    left = merge_sort(lst[: mid])
+    right = merge_sort(lst[mid:])
+    return merge(left, right)
+
+def merge(left, right):
+    l, r, res = 0, 0, []
+    while l < len(left) and r < len(right):
+        if left[l] <= right[r]:
+            res.append(left[l])
+            l += 1
+        else:
+            res.append(right[r])
+            r += 1
+    res += left[l:]
+    res += right[r:]
+    return res
+
+# 方法四：堆排序
+# -*- coding:utf-8 -*-
+def siftup(lst, temp, begin, end):
+    if lst == []:
+        return []
+    i, j = begin, begin * 2 + 1
+    while j < end:
+        if j + 1 < end and lst[j + 1] > lst[j]:
+            j += 1
+        elif temp > lst[j]:
+            break
+        else:
+            lst[i] = lst[j]
+            i, j = j, 2 * j + 1
+    lst[i] = temp
+
+def heap_sort(lst):
+    if lst == []:
+        return []
+    end = len(lst)
+    for i in range((end // 2) - 1, -1, -1):
+        siftup(lst, lst[i], i, end)
+    for i in range(end - 1, 0, -1):
+        temp = lst[i]
+        lst[i] = lst[0]
+        siftup(lst, temp, 0, i)
+    return lst
+ 
+# 方法五：冒泡排序
+# -*- coding:utf-8 -*-
+def bubble_sort(lst):
+    if lst == []:
+        return []
+    for i in range(len(lst)):
+        for j in range(1, len(lst) - i):
+            if lst[j-1] > lst[j]:
+                lst[j-1], lst[j] = lst[j], lst[j-1]
+    return lst
+
+# 方法六：直接选择排序
+# -*- coding:utf-8 -*-
+def select_sort(lst):
+    if lst == []:
+        return []
+    for i in range(len(lst)-1):
+        smallest = i
+        for j in range(i, len(lst)):
+            if lst[j] < lst[smallest]:
+                smallest = j
+        lst[i], lst[smallest] = lst[smallest], lst[i] 
+    return lst
+
+# 方法七：插入排序
+# -*- coding:utf-8 -*-
+def Insert_sort(lst):
+    if lst == []:
+        return []
+    for i in range(1, len(lst)):
+        temp = lst[i]
+        j = i
+        while j > 0 and temp < lst[j - 1]:
+            lst[j] = lst[j - 1]
+            j -= 1
+        lst[j] = temp
+    return lst
+
+```
+
+
+
+
+
 # REFERENCE
 
 * [什么是P问题、NP问题和NPC问题]([http://www.matrix67.com/blog/archives/105](http://www.matrix67.com/blog/archives/105))

@@ -1209,3 +1209,62 @@ class Solution:
         return 0
 ```
 
+思路：
+
+如果是排序好的数组，如果这个数存在，则中间那个数一定是我们要找的那个数，也是统计学上的中位数！
+
+# 29. 最小的K个数
+
+输入n个整数，找出其中最小的K个数。例如输入4,5,1,6,2,7,3,8这8个数字，则最小的4个数字是1,2,3,4,。
+
+思路：本题涉及各种排序，可以先对序列排序然后选出前K个数。
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def GetLeastNumbers_Solution(self, tinput, k):
+        # write code here
+        if k > len(tinput):
+            return []
+        tinput.sort()
+        return tinput[:k]
+```
+
+用快速排序：
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def GetLeastNumbers_Solution(self, tinput, k):
+        # write code here
+        def quick_sort(lst):
+            if not lst:
+                return []
+            pivot = lst[0]
+            left = quick_sort([x for x in lst[1: ] if x < pivot])
+            right = quick_sort([x for x in lst[1: ] if x >= pivot])
+            return left + [pivot] + right
+        if tinput == [] or k > len(tinput):
+            return []
+        tinput = quick_sort(tinput)
+        return tinput[: k]
+```
+
+
+
+# 30.
+
+# 31.
+
+# 32.
+
+# 33
+
+# 34.
+
+# 35.
+
+# 36.
+
+
+
