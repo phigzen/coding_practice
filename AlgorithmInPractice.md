@@ -1250,9 +1250,49 @@ class Solution:
         return tinput[: k]
 ```
 
+# 30. 连续子数组的最大和
+
+HZ偶尔会拿些专业问题来忽悠那些非计算机专业的同学。今天测试组开完会后,他又发话了:在古老的一维模式识别中,常常需要计算连续子向量的最大和,当向量全为正数的时候,问题很好解决。但是,如果向量中包含负数,是否应该包含某个负数,并期望旁边的正数会弥补它呢？例如:{6,-3,-2,7,-15,1,2,2},连续子向量的最大和为8(从第0个开始,到第3个为止)。给一个数组，返回它的最大连续子序列的和，你会不会被他忽悠住？(子向量的长度至少是1)
+
+思路：如果枚举所有的可能性，则含有n个元素的数组的子数组有$\frac{n(n+1)}{2} $ 种可能性。所以计算出所有子数组的和最快也要$O(n^2)$的时间。
+
+通过分析我们发现，累加的子数组和，如果大于零，那么我们继续累加就行；否则，则需要剔除原来的累加和重新开始。如下图：
+
+![image-20190606093616835](pics/image-20190606093616835.png)
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def FindGreatestSumOfSubArray(self, array):
+        # write code here
+        if not array:
+            return 0
+        max_ = array[0] # 记录当前最大子数组和
+        marker_ = array[0] # 记录当前的子数组和
+        
+        for ele in array[1:]:
+            if marker_ < 0 :
+                marker_ = ele
+            else:
+                marker_ += ele
+            if marker_ >= max_:
+                max_ = marker_
+        return max_
+```
+
+```python
+class Solution:
+    def FindGreatestSumOfSubArray(self, array):
+        res =len(array) and max(array)
+        temp = 0
+        for i in array:
+            temp = max(i,temp+i)
+            res = max(res,temp)
+        return res
+
+```
 
 
-# 30.
 
 # 31.
 
@@ -1265,6 +1305,14 @@ class Solution:
 # 35.
 
 # 36.
+
+# 37.
+
+# 38. 
+
+# 39.
+
+# 40.
 
 
 
