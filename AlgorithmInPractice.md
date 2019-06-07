@@ -1280,27 +1280,228 @@ class Solution:
         return max_
 ```
 
+动态规划：
+$$
+f(i)=\left\{\begin{array}{ll}{\text { pData }[i]} & {i=0\ 或者\ f(i-1)\leq0} \\ {f(i-1)+\text { pData }[i]} & {i \neq 0\ 或者\ f(i-1)>0}\end{array}\right.
+$$
+$f(i)$表示以第$i$个数字结尾的子数组的最大和，那我们需要求出$max(f(i))$。
+
 ```python
+# -*- coding:utf-8 -*-
 class Solution:
     def FindGreatestSumOfSubArray(self, array):
-        res =len(array) and max(array)
-        temp = 0
-        for i in array:
-            temp = max(i,temp+i)
-            res = max(res,temp)
-        return res
+        if not array:
+            return 0
+        max_ = [array[0]]
+        for i,num in enumerate(array[1:],1):
+            if max_[i - 1] <= 0:
+                max_.append(num)
+            else:
+                max_.append(max_[i - 1] + num)
+        return max(max_)
+```
 
+# 31. 整数中1出现的次数(从1到n整数中1出现的次数)
+
+求出1~13的整数中1出现的次数,并算出100~1300的整数中1出现的次数？为此他特别数了一下1~13中包含1的数字有1、10、11、12、13因此共出现6次,但是对于后面问题他就没辙了。ACMer希望你们帮帮他,并把问题更加普遍化,可以很快的求出任意非负整数区间中1出现的次数（从1 到 n 中1出现的次数）。
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def NumberOf1Between1AndN_Solution(self, n):
+        # write code here
+        n_str = [p for i in range(1,n+1) for p in str(i)]
+        n_str_filter = [i for i in n_str if i == '1' ]
+        return len(n_str_filter)
+```
+
+？更好的解法：
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+
+    def NumberOf1Between1AndN_Solution(self, n):
+        """
+        :type n: int
+        :rtype: int
+
+        例：对于824883294，先求0－800000000之间（不包括800000000）的，再求0－24883294之间的。
+        如果等于1，如1244444，先求0－1000000之间，再求1000000－1244444，那么只需要加上244444＋1，再求0－244444之间的1
+        如果大于1，例：0－800000000之间1的个数为8个100000000的1的个数加上100000000，因为从1000000000－200000000共有1000000000个数且最高位都为1。
+        对于最后一位数，如果大于1，直接加上1即可。
+        """
+        result = 0
+        if n < 0:
+            return 0
+        length = len(str(n))
+        listN = list(str(n))
+        for i, v in enumerate(listN):
+            a = length - i - 1  # a为10的幂
+            if i==length-1 and int(v)>=1:
+                result+=1
+                break
+            if int(v) > 1:
+                result += int(10 ** a * a / 10) * int(v) + 10**a
+            if int(v) == 1:
+                result += (int(10 ** a * a / 10) + int("".join(listN[i+1:])) + 1)
+        return result
 ```
 
 
 
-# 31.
+# 32. 把数组排成最小的数
 
-# 32.
+输入一个正整数数组，把数组里所有数字拼接起来排成一个数，打印能拼接出的所有数字中最小的一个。例如输入数组{3，32，321}，则打印出这三个数字能排成的最小数字为321323。
 
-# 33
+思路：最常规的做法是把所有的可能性都列出来。$n$个数会有$n!$种组合，算法的时间复杂度较高，为O(n!)。
 
-# 34.
+```python
+class Solution:
+    def PrintMinNumber(self, numbers):
+        if not numbers: return ""
+        numbers = list(map(str, numbers))
+        numbers.sort(cmp=lambda x, y: cmp(x + y, y + x))
+        return "".join(numbers).lstrip('0') or'0'
+```
+
+```python
+class Solution:
+    def compare(self,num1,num2):
+        t = str(num1)+str(num2)
+        s = str(num2)+str(num1)
+        if t>s:
+            return 1
+        elif t<s:
+            return -1
+        else:
+            return 0
+    def PrintMinNumber(self, numbers):
+        # write code here
+        if numbers is None:
+            return ""
+        lens = len(numbers)
+        if lens ==0:
+            return ""
+        tmpNumbers = sorted(numbers,cmp=self.compare)
+        return int(''.join(str(x)for x in tmpNumbers))
+
+```
+
+注意：`cmp`参数在python3中已经被取消了，换成了`key`，`cmp(f(a), f(b))`需要被改成`f(item)`的形式。也可以用[`functools.cmp_to_key`](https://docs.python.org/3/library/functools.html#functools.cmp_to_key)来替代。
+
+```python
+actors = [Person('Eric', 'Idle'),
+          Person('John', 'Cleese'),
+          Person('Michael', 'Palin'),
+          Person('Terry', 'Gilliam'),
+          Person('Terry', 'Jones')]
+# Python 2
+def cmp_last_name(a, b):
+    """ Compare names by last name"""
+    return cmp(a.last, b.last)
+  
+sorted(actors, cmp=cmp_last_name)
+# ['John Cleese', 'Terry Gilliam', 'Eric Idle', 'Terry Jones', 'Michael Palin']
+
+# Python 3
+def keyfunction(item):
+    """Key for comparison by last name"""
+    return item.last
+
+sorted(actors, key=keyfunction)
+# ['John Cleese', 'Terry Gilliam', 'Eric Idle', 'Terry Jones', 'Michael Palin']
+```
+
+所以在python3中，对于本题只需要修改一行代码：
+
+```python
+from functools import cmp_to_key
+class Solution:
+    def compare(self,num1,num2):
+        t = str(num1)+str(num2)
+        s = str(num2)+str(num1)
+        if t>s:
+            return 1
+        elif t<s:
+            return -1
+        else:
+            return 0
+    def PrintMinNumber(self, numbers):
+        # write code here
+        if numbers is None:
+            return ""
+        lens = len(numbers)
+        if lens ==0 :
+            return ""
+        tmpNumbers = sorted(numbers,key=cmp_to_key(self.compare))
+        return int(''.join(str(x)for x in tmpNumbers))
+```
+
+# 33. 丑数
+
+把只包含质因子2、3和5的数称作丑数（Ugly Number）。例如6、8都是丑数，但14不是，因为它包含质因子7。 习惯上我们把1当做是第一个丑数。求按从小到大的顺序的第N个丑数。
+
+常规写法（因为时间复杂度高无法AC，因为对于每一个整数都得进行取余数和除法计算）：思路是写一个判断是否为丑数的子函数，然后对进行遍历。
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def GetUglyNumber_Solution(self, index):
+        # write code here
+        if (index<=0) or (not isinstance(index,int)):
+            return None
+        i = 0 # to mark the ugly number
+        num = 1 # to iterate
+        while True:
+            if self.isUgly(num):
+                i+=1
+                if i == index:
+                    return num
+            num+=1
+             
+    def isUgly(self, number):
+        while number%2 == 0:
+            number/=2
+        while number%3 == 0:
+            number/=3
+        while number%5 == 0:
+            number/=5
+        return number==1
+```
+
+更好的做法：创建数组保存已找到的丑数，用空间换时间。
+
+根据丑数的定义，每一个丑数都应该是前面的丑数乘以2、3或者5得到的结果。关键问题在于如何保证数组里面的丑数是排好序的。对乘以2而言，肯定存在某一个丑数T2，排在它之前的每一个丑数乘以2得到的结果都会小于已有最大的丑数，在它之后的每一个丑数乘以乘以2得到的结果都会太大。我们只需要记下这个丑数的位置，同时每次生成新的丑数的时候，去更新这个T2。对乘以3和5而言，也存在着同样的T3和T5。
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def GetUglyNumber_Solution(self, index):
+        # write code here
+        if index < 7:
+            return index
+        result = [1, 2, 3, 4, 5, 6]
+        t2, t3, t5 = 3, 2, 1 # mark the index
+        # result[t2]*2 > max(result)
+        # result[t3]*3 > max(result)
+        # result[t5]*5 > max(result)
+        for i in range(6, index):
+            result.append(min(result[t2] * 2, result[t3] * 3, result[t5] * 5)) # M2, M3, M5中的最小者
+            while result[t2] * 2 <= result[i]:
+                t2 += 1
+            while result[t3] * 3 <= result[i]:
+                t3 += 1
+            while result[t5] * 5 <= result[i]:
+                t5 += 1
+        return result[index - 1]
+```
+
+# 34.第一个只出现一次的字符
+
+在一个字符串(0<=字符串长度<=10000，全部由字母组成)中找到第一个只出现一次的字符,并返回它的位置, 如果没有则返回 -1（需要区分大小写）
+
+
 
 # 35.
 
@@ -1313,6 +1514,60 @@ class Solution:
 # 39.
 
 # 40.
+
+# 41.
+
+# 42.
+
+# 43.
+
+# 44.
+
+# 45.
+
+# 46.
+
+# 47.
+
+# 48. 
+
+# 49.
+
+# 50.
+
+# 51.
+
+# 52.
+
+# 53.
+
+# 54.
+
+# 55.
+
+# 56.
+
+# 57.
+
+# 58. 
+
+# 59.
+
+# 60.
+
+# 61.
+
+# 62.
+
+# 63.
+
+# 64.
+
+# 65.
+
+# 66.
+
+
 
 
 

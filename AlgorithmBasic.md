@@ -192,6 +192,10 @@ if __name__ == '__main__':
     # [1, 2, 3, 5, 6, 8, 10]
 ```
 
+
+
+# 
+
 #### python实现的各种排序：
 
 ```python
@@ -296,6 +300,8 @@ def Insert_sort(lst):
     return lst
 
 ```
+
+# 动态规划（Dynamic Programming）
 
 
 
