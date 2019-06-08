@@ -319,7 +319,21 @@ def Insert_sort(lst):
 
 
 
+# 位运算
 
+异或XOR
+
+异或，英文为exclusive OR，缩写成xor
+
+异或（xor）是一个数学运算符。它应用于逻辑运算。异或的数学符号为“⊕”，计算机符号为“xor”。其运算法则为：
+
+a⊕b = (¬a ∧ b) ∨ (a ∧¬b)
+
+如果a、b两个值不相同，则异或结果为1。如果a、b两个值相同，异或结果为0。
+
+![image-20190608172715759](pics/image-20190608172715759.png)
+
+原码、反码、补码：https://blog.csdn.net/zl10086111/article/details/80907428
 
 # REFERENCE
 

@@ -1707,17 +1707,423 @@ class Solution:
 
 统计一个数字在排序数组中出现的次数。
 
-# 38. 
+常规做法：顺序扫描，时间复杂度为$O(n)$
 
-# 39.
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def GetNumberOfK(self, data, k):
+        # write code here
+        if not data:
+            return 0
+        count=0
+        for i in data:
+            if i == k:
+                count+=1
+        return count
+```
 
-# 40.
+python 调用内置函数：
 
-# 41.
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def GetNumberOfK(self, data, k):
+        # write code here
+        return data.count(k)
+```
 
-# 42. (06-07)
+更加通用的做法：
 
-# 43.
+既然是已经排序好的数组，那么第一个想到的就是二分查找法。做法就是使用二分法找到数字在数组中出现的第一个位置，再利用二分法找到数字在数组中出现的第二个位置。时间复杂度为O(logn + logn)，最终的时间复杂度为O(logn)。
+
+具体过程：
+
+**如何使用二分查找算法在数组中找到第一个k：**先拿数组中间的数字与k进行比较，分三种情况，（1）如果中间数字比k大，那么k只可能出现在数组的前半段，下一轮就在前半段内找k。（2）若中间数字比k小，则k只可能出现在数组后半段，下一轮只需在后半段找k。（3）如果中间数字与k相等，我们需要判断这是否为第一个k，如果中间数字的前一个数字不是k，则中间数字正好是第一个k；如果中间数字的前一个数字是k，则第一个k只可能在前半段中，下一轮就在前半段内找k。具体过程我们可以用递归或者循环实现。
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def GetNumberOfK(self, data, k):
+        if not data:
+            return 0
+        if self.GetLastK(data, k) == -1 and self.GetFirstK(data, k) == -1:
+            return 0
+        return self.GetLastK(data, k) - self.GetFirstK(data, k) + 1
+    
+    def GetFirstK(self, data, k):
+        low = 0
+        high = len(data) - 1
+        while low <= high:
+            mid = (low + high) // 2
+            if data[mid] < k:
+                low = mid + 1
+            elif data[mid] > k:
+                high = mid - 1
+            else:
+                if mid == low or data[mid - 1] != k: # 当到list[0]或不为k的时候跳出函数
+                    return mid
+                else:
+                    high = mid - 1
+        return -1
+
+    def GetLastK(self, data, k):
+        low = 0
+        high = len(data) - 1
+        while low <= high:
+            mid = (low + high) // 2
+            if data[mid] > k:
+                high = mid - 1
+            elif data[mid] < k:
+                low = mid + 1
+            else:
+                if mid == high or data[mid + 1] != k:
+                    return mid
+                else:
+                    low = mid + 1
+        return -1
+```
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def GetNumberOfK(self, data, k):
+        l = 0
+        r = len(data)-1
+        firstIndex  = self.getFirstIndex(data, k, l, r)
+        lastIndex = self.getLastIndex(data, k, l, r)
+        return lastIndex - firstIndex + 1
+    def getFirstIndex(self, data, k, l, r):
+        if l > r:
+            return -1
+        mid = int((r+l)/2)
+        if data[mid] == k and (mid==0 or data[mid-1] != k):
+            return mid
+        else:
+            if data[mid]>=k:
+                return self.getFirstIndex(data, k, l, mid-1)
+            else:
+                return self.getFirstIndex(data, k, mid+1, r)
+    def getLastIndex(self, data, k, l, r):
+        while l<=r:
+            mid = int((l+r)/2)
+            if data[mid] == k and (mid==len(data)-1 or data[mid+1] != k):
+                return mid
+            else:
+                if data[mid] >k:
+                    r = mid -1
+                else:
+                    l = mid+1
+        return -2 # to make (lastIndex - firstIndex + 1) equal 0 when no k in data.
+```
+
+# 38. 二叉树的深度
+
+输入一棵二叉树，求该树的深度。从根结点到叶结点依次经过的结点（含根、叶结点）形成树的一条路径，最长路径的长度为树的深度。
+
+这里的深度定义为：最大的节点数，而非边数。
+
+<img src='pics/image-20190608145024014.png' style="zoom:66%" />
+
+思路：可用递归实现，属于DFS（深度优先搜索）；另一种方法是按照层次遍历，属于BFS（广度优先搜索）。
+
+```python
+# DFS
+# -*- coding:utf-8 -*-
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+class Solution:
+    def TreeDepth(self, pRoot):
+        # write code here
+        if pRoot is None:
+            return 0
+        left_depth = self.TreeDepth(pRoot.left)
+        right_depth = self.TreeDepth(pRoot.right)
+        return max(left_depth, right_depth)+1
+```
+
+```python
+# BFS
+class Solution:
+    # 层次遍历
+    def levelOrder(self, root):
+        # write your code here
+        # 存储最后层次遍历的结果
+        res = []
+        # 层数
+        count = 0
+        # 如果根节点为空，则返回空列表
+        if root is None:
+            return count
+        # 模拟一个队列储存节点
+        q = []
+        # 首先将根节点入队
+        q.append(root)
+        # 列表为空时，循环终止
+        while len(q) != 0:
+            # 使用列表存储同层节点
+            tmp = []
+            # 记录同层节点的个数
+            length = len(q)
+            for i in range(length):
+                # 将同层节点依次出队
+                r = q.pop(0)
+                if r.left is not None:
+                    # 非空左孩子入队
+                    q.append(r.left)
+                if r.right is not None:
+                    # 非空右孩子入队
+                    q.append(r.right)
+                tmp.append(r.val)
+            if tmp:
+                count += 1  # 统计层数
+            res.append(tmp)
+        return count
+    
+    def TreeDepth(self, pRoot):
+        # write code here
+        # 使用层次遍历
+        # 当树为空直接返回0
+        if pRoot is None:
+            return 0
+        count = self.levelOrder(pRoot)
+        return count
+```
+
+# ?39. 平衡二叉树
+
+输入一棵二叉树，判断该二叉树是否是平衡二叉树。(任意节点的左右子树的深度相差不超过1)
+
+常规做法：借助于38题中的TreeDepth，可以得到二叉树左右子树的深度，然后求差，判断是否符合条件，对所有的节点进行这样的递归判断。但是这样会重复遍历一些节点，影响性能。
+
+<img src='pics/image-20190608145024014.png' style="zoom:66%" />
+
+```python
+# -*- coding:utf-8 -*-
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+class Solution:
+    def IsBalanced_Solution(self, pRoot):
+        # write code here
+        if pRoot is None:
+            return True
+        depth_l = self.TreeDepth(pRoot.left)
+        depth_r = self.TreeDepth(pRoot.right)
+        delta = abs(depth_l-depth_r)
+        if delta<= 1:
+            return self.IsBalanced_Solution(pRoot.left) and self.IsBalanced_Solution(pRoot.right)
+          
+    def TreeDepth(self, pRoot):
+        # write code here
+        if pRoot is None:
+            return 0
+        left_depth = self.TreeDepth(pRoot.left)
+        right_depth = self.TreeDepth(pRoot.right)
+        return max(left_depth, right_depth)+1
+```
+
+??每个节点只遍历一次的解法：
+
+如果我们用**后序遍历**的方式遍历二叉树的每一个结点，在遍历到一个结点之前我们就已经遍历了它的左右子树。只要在遍历每个结点的时候记录它的深度（某一结点的深度等于它到叶结点的路径的长度），我们就可以一边遍历一边判断每个结点是不是平衡的。
+
+```python
+# -*- coding:utf-8 -*-
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+class Solution:
+    def IsBalanced_Solution(self, p):
+        return self.dfs(p) != -1
+    def dfs(self, p):
+        if p is None:
+            return 0
+        left = self.dfs(p.left)
+        if left == -1:
+            return -1
+        right = self.dfs(p.right)
+        if right == -1:
+            return -1
+        if abs(left - right) > 1:
+            return -1
+        return max(left, right) + 1
+```
+
+# 40. 数组中只出现一次的数字
+
+一个整型数组里除了两个数字之外，其他的数字都出现了两次。请写程序找出这两个只出现一次的数字。
+
+常规解法：借助于哈希表，两次遍历
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    # 返回[a,b] 其中ab是出现一次的两个数字
+    def FindNumsAppearOnce(self, array):
+        # write code here
+        dict_count={}
+        for i in array:
+            if i in dict_count:
+                dict_count[i]+=1
+            else:
+                dict_count[i]=1
+        result=[]
+        for k,v in dict_count.items():
+            if v == 1:
+                result.append(k)
+        return result
+```
+
+如果要求时间复杂度是$O(n)$，空间复杂度是$O(1)$
+
+???借助于异或运算：任何一个数字异或它自己都等于0
+
+```python
+class Solution:
+    def FindNumsAppearOnce(self, array):
+        if not array:
+            return []
+        # 对array中的数字进行异或运算
+        tmp = 0
+        for i in array:
+            tmp ^= i
+        # 获取tmp中最低位1的位置
+        idx = 0
+        while (tmp & 1) == 0:
+            tmp >>= 1
+            idx += 1
+        a = b = 0
+        for i in array:
+            if self.isBit(i, idx):
+                a ^= i
+            else:
+                b ^= i
+        return [a, b]
+
+    def isBit(self, num, idx):
+        """
+        判断num的二进制从低到高idx位是不是1
+        :param num: 数字
+        :param idx: 二进制从低到高位置
+        :return: num的idx位是否为1
+        """
+        num = num >> idx
+        return num & 1
+```
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    # 返回[a,b] 其中ab是出现一次的两个数字
+    def FindNumsAppearOnce(self, array):
+        # write code here
+        if len(array) <= 0:
+            return []
+        resultExclusiveOR = 0
+        length = len(array)
+        for i in array:
+            resultExclusiveOR ^= i
+        firstBitIs1 = self.FindFisrtBitIs1(resultExclusiveOR)
+        num1, num2 = 0, 0
+        for i in array:
+            if self.BitIs1(i, firstBitIs1):
+                num1 ^= i
+            else:
+                num2 ^= i
+        return num1, num2
+        
+    def FindFisrtBitIs1(self, num):
+        indexBit = 0
+        while num & 1 == 0 and indexBit <= 32:
+            indexBit += 1
+            num = num >> 1
+        return indexBit
+    
+    def BitIs1(self, num, indexBit):
+        num = num >> indexBit
+        return num & 1
+```
+
+# 41. 和为S的连续正数序列
+
+小明很喜欢数学,有一天他在做数学作业时,要求计算出9~16的和,他马上就写出了正确答案是100。但是他并不满足于此,他在想究竟有多少种连续的正数序列的和为100(至少包括两个数)。没多久,他就得到另一组连续正数和为100的序列:18,19,20,21,22。现在把问题交给你,你能不能也很快的找出所有和为S的连续正数序列? Good Luck!
+
+输出所有和为S的连续正数序列。序列内按照从小至大的顺序，序列间按照开始数字从小到大的顺序。
+
+我们可以考虑用两个数small和big分别表示序列中的最小值和最大值。首先初始化：small=1，big=2，如果从small到big的序列和大于s，则可以从序列中去掉较小的值，也就是增大small的值。如果从small到big的序列和小于s，则可以增大big，让这个序列包含更多的数字。因为这个序列至少要有两个数字，我们一直增加small到$\frac{1+s}{2}$为止。
+$$
+\frac{1+s}{2}-1 + \frac{1+s}{2} = s
+\\
+\frac{1+s}{2} + \frac{1+s}{2} +1 = s+2>s
+$$
+![image-20190608222258987](pics/image-20190608222258987.png)
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def FindContinuousSequence(self, tsum):
+        # write code here
+        result = []
+        low, high = 1, 2
+        while low < high:
+            curSum = (low + high) * (high - low + 1) / 2
+            if curSum == tsum:
+                temp = []
+                for i in range(low, high+1):
+                    temp.append(i)
+                result.append(temp)
+                low += 1
+            elif curSum < tsum:
+                high += 1
+            else:
+                low += 1
+        return result
+```
+
+# 42. 和为S的两个数字
+
+输入一个递增排序的数组和一个数字S，在数组中查找两个数，使得他们的和正好是S，如果有多对数字的和等于S，输出两个数的乘积最小的。
+
+对应每个测试案例，输出两个数，小的先输出。
+
+最常规的做法：先在数组中固定一个数字，再依次判断数组中其余的$n-1$个数字与它的和是不是等于S，时间复杂度为$O(n^2)$
+
+更好的做法：对于一个数组，我们可以定义两个指针，一个从左往右遍历（pleft），另一个从右往左遍历（pright）。首先，我们比较第一个数字和最后一个数字的和curSum与给定数字sum，如果curSum < sum，那么我们就要加大输入值，所以，pleft向右移动一位，重复之前的计算；如果curSum > sum，那么我们就要减小输入值，所以，pright向左移动一位，重复之前的计算；如果相等，那么这两个数字就是我们要找的数字，直接输出即可。这么做的好处是，也保证了乘积最小。
+
+![image-20190608180946504](pics/image-20190608180946504.png)
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def FindNumbersWithSum(self, array, tsum):
+        # write code here
+        if len(array) <= 1:
+            return []
+        left, right = 0, len(array)-1
+        while left < right:
+            if array[left] + array[right] == tsum:
+                return array[left], array[right]
+            elif array[left] + array[right] < tsum:
+                left += 1
+            else:
+                right -= 1
+        return []
+```
+
+# 43. 左旋转字符串
+
+汇编语言中有一种移位指令叫做循环左移（ROL），现在有个简单的任务，就是用字符串模拟这个指令的运算结果。对于一个给定的字符序列S，请你把其循环左移K位后的序列输出。例如，字符序列S=”abcXYZdef”,要求输出循环左移3位后的结果，即“XYZdefabc”。是不是很简单？OK，搞定它！
+
+
+
+
 
 # 44.
 
