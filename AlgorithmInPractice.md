@@ -1497,17 +1497,215 @@ class Solution:
         return result[index - 1]
 ```
 
-# 34.第一个只出现一次的字符
+# 34. 第一个只出现一次的字符
 
 在一个字符串(0<=字符串长度<=10000，全部由字母组成)中找到第一个只出现一次的字符,并返回它的位置, 如果没有则返回 -1（需要区分大小写）
 
+常规思路：每次拿到一个字符串，和后面的每个字符串进行比较，如果没有相同的则输出该字符串。但时间复杂度是$O(n^{2})$。
 
+可以借助于哈希表，用空间换时间：
 
-# 35.
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def FirstNotRepeatingChar(self, s):
+        # write code here
+        length = len(s)
+        if length == 0:
+            return -1
+        dict_s = {}
+        for i in range(length):
+            if s[i] not in dict_s.keys():
+                dict_s[s[i]] = 1
+            else:
+                dict_s[s[i]] += 1
+        for i in range(length):
+            if dict_s[s[i]] == 1:
+                return i
+        return -1
+```
 
-# 36.
+python更简洁的写法：
 
-# 37.
+```python
+class Solution:
+    def FirstNotRepeatingChar(self, s):
+        return s.index(list(filter(lambda c:s.count(c)==1,s))[0]) if s else -1
+
+```
+
+首先用字符串的count方法统计其中某个字符出现的次数，然后过滤出count结果为1的字符，返回第一个的索引。完整点的写法：
+
+```python
+class Solution:
+    def FirstNotRepeatingChar(self, s):
+        # write code here
+        if len(s)<0:
+            return -1
+        for i in s:
+            if s.count(i)==1:
+                return s.index(i)
+                break
+        return -1
+```
+
+对于原书中提到的建立哈希表的方法：
+
+```python
+class Solution:
+    def FirstNotRepeatingChar(self, s):
+        # 建立哈希表,字符长度为8的数据类型,共有256种可能,于是创建一个长度为256的列表
+        ls=[0]*256
+        # 遍历字符串,下标为ASCII值,值为次数
+        for i in s:
+            ls[ord(i)]+=1
+        # 遍历列表,找到出现次数为1的字符并输出位置
+        for j in s:
+            if ls[ord(j)]==1:
+                return s.index(j)
+                break
+        return -1
+```
+
+# ?35. 数组中的逆序对
+
+在数组中的两个数字，如果前面一个数字大于后面的数字，则这两个数字组成一个逆序对。输入一个数组,求出这个数组中的逆序对的总数P。并将P对1000000007取模的结果输出。 即输出P%1000000007
+
+* 常规思路：暴力解法，顺序扫描整个数组，每扫描到一个数字的时候，逐个比较该数字和它后面的数字的大小。如果后面的数字比它小，则这两个数字就组成一个逆序对。假设数组中含有$n$个数字，由于每个数字都要和$O(n)$个数字作比较，因此这个算法的时间复杂度是$O(n^2)$。
+
+* 分治，归并排序：
+
+![image-20190607223904387](pics/image-20190607223904387.png)
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def InversePairs(self, data):
+        # write code here
+        if not data:
+            return 0
+        temp = [i for i in data]
+        return self.mergeSort(temp, data, 0, len(data)-1) % 1000000007
+    def mergeSort(self, temp, data, low, high):
+        if low >= high:
+            temp[low] = data[low]
+            return 0
+        mid = (low + high) / 2
+        left = self.mergeSort(data, temp, low, mid)
+        right = self.mergeSort(data, temp, mid+1, high)
+        count = 0
+        i = low
+        j = mid+1
+        index = low
+        while i <= mid and j <= high:
+            if data[i] <= data[j]:
+                temp[index] = data[i]
+                i += 1
+            else:
+                temp[index] = data[j]
+                count += mid-i+1
+                j += 1
+            index += 1
+        while i <= mid:
+            temp[index] = data[i]
+            i += 1
+            index += 1
+        while j <= high:
+            temp[index] = data[j]
+            j += 1
+            index += 1
+        return count + left + right
+```
+
+# 36. 两个链表的第一个公共结点
+
+输入两个链表，找出它们的第一个公共结点。
+
+常规解法：
+
+* 思路一：分别遍历两个链表，每次进行比较，如果两个链表的长度分别为$m$和$n$，则时间复杂度为$O(mn)$。蛮力的方法不是最好的选择。
+
+进一步思考：
+
+![image-20190608110551376](pics/image-20190608110551376.png)
+
+* 思路二：因为这两个链表是单向链表，则如果两个链表上有公共节点，那么这两个链表从某一节点开始，它们的下一个节点都指向同一个节点，并且唯一！因此从第一个公共节点开始，之后它们的所有节点都是重合的，不可能再出现分叉。其拓扑结构是Y而非X。因此我们可以从链表的尾部出发，寻找它们的最后一个公共节点。但是单向链表中我们只能从头结点开始顺序遍历，最后才能到达尾节点，但尾节点却要先用于比较。这是典型的“后进先出”：用栈！可以借助两个辅助栈存储节点，用空间换时间。
+* 思路三：首先遍历两个链表得到它们的长度$m$, $n$, 然后第二次遍历在较长的链表上先走$|m-n|$步，接着同时在两个链表上遍历，找到第一个相同的节点就是它们的第一个公共节点。
+
+思路3的python实现：
+
+```python
+# -*- coding:utf-8 -*-
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+class Solution:
+    def FindFirstCommonNode(self, pHead1, pHead2):
+        # write code here
+        len1 = self.get_length(pHead1)
+        len2 = self.get_length(pHead2)
+        if len1>len2:
+            step0 = len1-len2
+            for i in range(step0):
+                pHead1 = pHead1.next
+        elif len1<len2:
+            step0 = len2-len1
+            for i in range(step0):
+                pHead2 = pHead2.next
+        else:
+            pass
+        final_head = None
+        while pHead1 is not None:
+            if pHead1 == pHead2:
+                final_head = pHead1
+                break
+            else:
+                pHead1 = pHead1.next
+                pHead2 = pHead2.next
+        return final_head
+    def get_length(self,head):
+        i=0
+        while head is not None:
+            i+=1
+            head = head.next
+        return i
+```
+
+思路二：
+
+```python
+# -*- coding:utf-8 -*-
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+class Solution:
+    def FindFirstCommonNode(self, pHead1, pHead2):
+        if not pHead1 or not pHead2:
+            return None
+        stack1 = []
+        stack2 = []
+        while pHead1:
+            stack1.append(pHead1)
+            pHead1 = pHead1.next
+        while pHead2:
+            stack2.append(pHead2)
+            pHead2 = pHead2.next
+        final_head = None
+        while stack1 and stack2:
+            top1 = stack1.pop()
+            top2 = stack2.pop()
+            if top1 is top2:
+                final_head = top1
+            else:
+                break
+        return final_head
+```
+
+# 37. 数字在排序数组中出现的次数
+
+统计一个数字在排序数组中出现的次数。
 
 # 38. 
 
@@ -1517,7 +1715,7 @@ class Solution:
 
 # 41.
 
-# 42.
+# 42. (06-07)
 
 # 43.
 
@@ -1541,7 +1739,7 @@ class Solution:
 
 # 53.
 
-# 54.
+# 54. (06-08)
 
 # 55.
 
@@ -1565,7 +1763,7 @@ class Solution:
 
 # 65.
 
-# 66.
+# 66.  (06-09)
 
 
 
