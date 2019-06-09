@@ -2121,55 +2121,536 @@ class Solution:
 
 汇编语言中有一种移位指令叫做循环左移（ROL），现在有个简单的任务，就是用字符串模拟这个指令的运算结果。对于一个给定的字符序列S，请你把其循环左移K位后的序列输出。例如，字符序列S=”abcXYZdef”,要求输出循环左移3位后的结果，即“XYZdefabc”。是不是很简单？OK，搞定它！
 
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def LeftRotateString(self, s, n):
+        # write code here
+        length = len(s)
+        if n <= 0 or length == 0:
+            return s
+        if n > length:
+            n = n % length
+        return s[n:] + s[:n]
+```
+
+# 44. 翻转单词顺序列
+
+牛客最近来了一个新员工Fish，每天早晨总是会拿着一本英文杂志，写些句子在本子上。同事Cat对Fish写的内容颇感兴趣，有一天他向Fish借来翻看，但却读不懂它的意思。例如，“student. a am I”。后来才意识到，这家伙原来把句子单词的顺序翻转了，正确的句子应该是“I am a student.”。Cat对一一的翻转这些单词顺序可不在行，你能帮助他么？
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def ReverseSentence(self, s):
+        # write code here
+        s_list = s.split(' ')
+        return ' '.join(s_list[::-1])
+```
+
+# 45. 扑克牌顺子
+
+LL今天心情特别好,因为他去买了一副扑克牌,发现里面居然有2个大王,2个小王(一副牌原本是54张^_^)...他随机从中抽出了5张牌,想测测自己的手气,看看能不能抽到顺子,如果抽到的话,他决定去买体育彩票,嘿嘿！！“红心A,黑桃3,小王,大王,方片5”,“Oh My God!”不是顺子.....LL不高兴了,他想了想,决定大\小 王可以看成任何数字,并且A看作1,J为11,Q为12,K为13。上面的5张牌就可以变成“1,2,3,4,5”(大小王分别看作2和4),“So Lucky!”。LL决定去买体育彩票啦。 现在,要求你使用这幅牌模拟上面的过程,然后告诉我们LL的运气如何， 如果牌能组成顺子就输出true，否则就输出false。为了方便起见,你可以认为大小王是0。
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def IsContinuous(self, numbers):
+        # write code here
+        if not numbers:
+            return False
+        numbers.sort()
+        zeroNum = numbers.count(0)
+        for i, v in enumerate(numbers[:-1]):
+            if v != 0:
+                if numbers[i+1]==v:
+                    return False
+                zeroNum = zeroNum - (numbers[i + 1] - v) + 1 # 如果后面的数字和前面的数字想差超过1，则用0补齐
+                if zeroNum < 0:
+                    return False
+        return True
+```
+
+```python
+class Solution:
+    def IsContinuous(self, numbers):
+        # write code here
+        if len(numbers) < 5:
+            return False
+        #计算0的个数
+        nOfZero = numbers.count(0)
+        #排序
+        numbers.sort()
+        #序列中间隔的值初始化为0
+        sumOfGap=0
+        #遍历非0部分的递增序列
+        for i in range(nOfZero, len(numbers) - 1):
+            small = numbers[i]
+            big = numbers[i + 1]
+            #当前与下一个值的比较，若相等则说明存在对子
+            if small == big:
+                return False
+            else:
+                #若不同，则得到二者的差再减1，若为0则说明连续，否则二者之间存在空缺
+                sumOfGap+= (big-small - 1)
+                #判断0的个数及序列中非0部分间隔值，若0不小于间隔值，则说明满足连续条件
+        if nOfZero >= sumOfGap:
+            return True
+        else:
+            return False
+```
+
+其实只需要满足两个条件即可：
+
+- 除0外没有重复
+- max-min<=4 (max和min中间最多空缺3个数，不是0就是它们之间的数，总归可以把空位补齐。再加上除0外没有重复的限制，就可以保证满足题目的条件)
+
+```python
+class Solution:
+    def IsContinuous(self, numbers):
+        # write code here
+        if len(numbers):
+            while min(numbers)==0:
+                numbers.remove(0)
+            if max(numbers) - min(numbers)<=4 and len(numbers)==len(set(numbers)):
+                return True
+```
+
+# 46. 孩子们的游戏(圆圈中最后剩下的数)
+
+每年六一儿童节,牛客都会准备一些小礼物去看望孤儿院的小朋友,今年亦是如此。HF作为牛客的资深元老,自然也准备了一些小游戏。其中,有个游戏是这样的:首先,让小朋友们围成一个大圈。然后,他随机指定一个数m,让编号为0的小朋友开始报数。每次喊到m-1的那个小朋友要出列唱首歌,然后可以在礼品箱中任意的挑选礼物,并且不再回到圈中,从他的下一个小朋友开始,继续0...m-1报数....这样下去....直到剩下最后一个小朋友,可以不用表演,并且拿到牛客名贵的“名侦探柯南”典藏版(名额有限哦!!^_^)。请你试着想下,哪个小朋友会得到这份礼品呢？(注：小朋友的编号是从0到n-1)
+
+例如，0~4组成的圆圈，每次删除第3个数字，则删除的前4个数字依次是，2、0、4、1，最后剩下3。这是著名的约瑟夫环问题。
+
+![image-20190609095209706](pics/image-20190609095209706.png)
+
+常规解法：
+
+模拟这个过程：
+
+| m    | n    | k    | start | final | nums_left |
+| ---- | ---- | ---- | ----- | ----- | --------- |
+| 3    | 5    | 2    | 0     | -1    | 0,1,2,3,4 |
+| 3    | 5    | 2    | 0     | 2     | 0,1,3,4   |
+| 3    | 4    | 0    | 2     | 0     | 1,3,4     |
+| 3    | 3    | 2    | 0     | 4     | 1,3       |
+| 3    | 2    | 0    | 2     | 1     | 3         |
+| 3    |      |      |       |       |           |
+
+```python
+
+# -*- coding:utf-8 -*-
+class Solution:
+    def LastRemaining_Solution(self, n, m):
+        if n < 1:
+            return -1
+        nums_left = list(range(n))
+        final = -1
+        start = 0
+        while nums_left:
+            k = (start + m - 1) % n
+            final = nums_left.pop(k)
+            n -= 1
+            start = k
+        return final
+
+```
+
+```python
+class Solution:
+    def LastRemaining_Solution(self, n, m):
+        # write code here
+        if n < 1 or m < 1:
+            return -1
+        childNum = list(range(n))
+        cur = 0  # 指向list的指针
+        while len(childNum) > 1:
+            for i in range(1,m):
+                cur += 1
+                # 当指针移到list的末尾，则将指针移到list的头
+                if cur == len(childNum):
+                    cur = 0
+            # 删除一个数，此时由于删除之后list的下标随之变化
+            # cur指向的便是原数组中的下一个数字，此时cur不需要移动
+            childNum.remove(childNum[cur])
+            if cur == len(childNum):  # list的长度和cur的值相等则cur指向0
+                cur = 0
+        return childNum[0]
+```
+
+???创新解法：
+
+通过归纳得出递推公式：
+$$
+f(n, m)=\left\{\begin{array}{ll}{0} & {n=1} \\ {[f(n-1, m)+m]\%n} & {n>1}\end{array}\right.
+$$
+
+
+```python
+class Solution:
+    def LastRemaining_Solution(self, n, m):
+        # write code here
+        if n < 1 or m < 1:
+            return -1
+        last = 0
+        for i in range(2, n+1):
+            last = (last+m)%i
+        return last
+```
+
+# ?47. 求1+2+3+...+n
+
+求1+2+3+...+n，要求不能使用乘除法、for、while、if、else、switch、case等关键字及条件判断语句（A?B:C）。
+
+```python
+# python中逻辑运算符的用法，a  and  b，a为False，返回a，a为True，就返回b
+class Solution:
+    def Sum_Solution(self, n):
+        # write code here
+        ans=n
+        temp=ans and self.Sum_Solution(n-1)
+        ans=ans+temp
+        return ans
+```
+
+```python
+class Solution:
+    def __init__(self):
+        self.sum = 0
+    def Sum_Solution(self, n):
+        # write code here
+        def recur(n):
+            self.sum += n
+            n -= 1
+            return (n>0) and self.Sum_Solution(n)
+        recur(n)
+        return self.sum
+# 解题的关键是使用递归，利用递归代替了循环，并且使用逻辑与运算判断n何时为0
+# 函数recur()实现了循环，从n一直递减加到了1，逻辑与and操作实现了当n=0时，不再计算Sum_Solution(n)，返回self.sum
+```
+
+# ?48. 不用加减乘除做加法
+
+写一个函数，求两个整数之和，要求在函数体内不得使用+、-、*、/四则运算符号。
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def Add(self, num1, num2):
+        # write code here
+        MAX = 0x7fffffff
+        mask = 0xffffffff
+        while num2 != 0:
+            num1, num2 = (num1 ^ num2), ((num1 & num2) << 1)
+            num1 = num1 & mask
+            num2 = num2 & mask
+        return num1 if num1 <= MAX else ~(num1 ^ mask)
+```
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def Add(self, num1, num2):
+        # write code here
+        # 由于题目要求不能使用四则运算，那么就需要考虑使用位运算
+        # 两个数相加可以看成两个数的每个位先相加，但不进位，然后在加上进位的数值
+        # 如12+8可以看成1+0=1 2+8=0，由于2+8有进位，所以结果就是10+10=20
+        # 二进制中可以表示为1000+1100 先每个位置相加不进位，
+        # 则0+0=0 0+1=1 1+0=1 1+1=0这个就是按位异或运算
+        # 对于1+1出现进位，我们可以使用按位与运算然后在将结果左移一位
+        # 最后将上面两步的结果相加，相加的时候依然要考虑进位的情况，直到不产生进位
+        # 注意python没有无符号右移操作，所以需要越界检查
+        # 按位与运算：相同位的两个数字都为1，则为1；若有一个不为1，则为0。
+        # 按位异或运算：相同位不同则为1，相同则为0。
+        while num2:
+            result = (num1 ^ num2) & 0xffffffff
+            carry = ((num1 & num2) << 1) & 0xffffffff
+            num1 = result
+            num2 = carry
+        if num1 <= 0x7fffffff:
+            result = num1
+        else:
+            result = ~(num1^0xffffffff)
+        return result
+```
+
+# 49. 把字符串转换成整数
+
+将一个字符串转换成一个整数(实现Integer.valueOf(string)的功能，但是string不符合数字要求时返回0)，要求不能使用字符串转换整数的库函数。 数值为0或者字符串不是一个合法的数值则返回0。
+
+输入一个字符串,包括数字字母符号,可以为空，
+
+如果是合法的数值表达则返回该数字，否则返回0。
+
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def StrToInt(self, s):
+        # write code here
+        try:
+            sn = int(s)
+        except:
+            sn = 0
+        return sn
+```
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def StrToInt(self, s):
+        # write code here
+        numlist=['0','1','2','3','4','5','6','7','8','9','+','-']
+        sum=0
+        label=1#正负数标记
+        if s=='':
+            return 0
+        if s[0] not in numlist:
+            return 0
+        if s[0] == '+':
+            label=1
+        elif s[0] == '-':
+            label=-1
+        else:
+            sum=sum*10+numlist.index(s[0])
+        for string in s[1:]:
+            if string in numlist and string not in ['+','-']: # 如果是合法字符
+                sum=sum*10+numlist.index(string)
+            else:
+                return 0
+        return sum*label
+```
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def StrToInt(self, s):
+        # write code here
+        begin = 0
+        label = 1
+        num = 0
+        if not s:
+            return 0
+        else:
+            minus = False
+            flag = False
+            if s[0] == '+':
+                begin = 1
+            if s[0] == '-':
+                begin = 1
+                label = -1
+            for each in s[begin:]:
+                if each >= '0' and each <= '9':
+                    num = num * 10 + label * (ord(each) - ord('0'))
+                else:
+                    num = 0
+                    break
+            return num
+```
 
 
 
+备注：
 
-# 44.
+* `ord()` 函数是 `chr()` 函数（对于 8 位的 ASCII 字符串）的配对函数，它以一个字符串（Unicode 字符）作为参数，返回对应的 ASCII 数值，或者 Unicode 数值。
+* `chr()` 用一个整数作参数，返回一个对应的字符。
 
-# 45.
+```python
+chr(65) # 'A'
+ord('A') # 65
+```
 
-# 46.
+# 50. 数组中重复的数字
 
-# 47.
+在一个长度为n的数组里的所有数字都在0到n-1的范围内。 数组中某些数字是重复的，但不知道有几个数字是重复的。也不知道每个数字重复几次。请找出数组中任意一个重复的数字。 例如，如果输入长度为7的数组{2,3,1,0,2,5,3}，那么对应的输出是第一个重复的数字2。
 
-# 48. 
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    # 这里要特别注意~找到任意重复的一个值并赋值到duplication[0]
+    # 函数返回True/False
+    def duplicate(self, numbers, duplication):
+        # write code here
+        for i in numbers:
+            if numbers.count(i) >1:
+                duplication[0]=i
+                return True
+        return False
+```
 
-# 49.
+思路：可以把当前序列当成是一个下标和下标对应值是相同的数组（时间复杂度为O(n),空间复杂度为O(1)）； 遍历数组，判断当前位的值和下标是否相等：
 
-# 50.
+（1）若相等，则遍历下一位；
+（2）若不等，则将当前位置i上的元素和a[i]位置上的元素比较：若它们相等，则找到了第一个相同的元素；若不等，则将它们两交换。换完之后a[i]位置上的值和它的下标是对应的，但i位置上的元素和下标并不一定对应；重复2的操作，直到当前位置i的值也为i，将i向后移一位，再重复2。
 
-# 51.
+**举例说明：{2,3,1,0,2,5,3}**
 
-# 52.
+- 0(索引值)和2(索引值位置的元素)不相等，并且2(索引值位置的元素)和1(以该索引值位置的元素2为索引值的位置的元素)不相等，则交换位置，数组变为：{1,3,2,0,2,5,3}；
+- 0(索引值)和1(索引值位置的元素)仍然不相等，并且1(索引值位置的元素)和3(以该索引值位置的元素1为索引值的位置的元素)不相等，则交换位置，数组变为：{3,1,2,0,2,5,3}；
+- 0(索引值)和3(索引值位置的元素)仍然不相等，并且3(索引值位置的元素)和0(以该索引值位置的元素3为索引值的位置的元素)不相等，则交换位置，数组变为：{0,1,2,3,2,5,3}；
+- 0(索引值)和0(索引值位置的元素)相等，遍历下一个元素；
+- 1(索引值)和1(索引值位置的元素)相等，遍历下一个元素；
+- 2(索引值)和2(索引值位置的元素)相等，遍历下一个元素；
+- 3(索引值)和3(索引值位置的元素)相等，遍历下一个元素；
+- 4(索引值)和2(索引值位置的元素)不相等，但是2(索引值位置的元素)和2(以该索引值位置的元素2为索引值的位置的元素)相等，则找到了第一个重复的元素。
 
-# 53.
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    # 这里要特别注意~找到任意重复的一个值并赋值到duplication[0]
+    # 函数返回True/False
+    def duplicate(self, numbers, duplication):
+        # write code here
+        n = len(numbers)
+        if n == 0:
+            return False
+        for i in range(n):
+            if numbers[i] < 0 or numbers[i] > n-1:
+                return False
+        for i in range(n):
+            while numbers[i] != i:
+                if numbers[i] == numbers[numbers[i]]:
+                    duplication[0] = numbers[i]
+                    return True
+                numbers[numbers[i]], numbers[i] = numbers[i], numbers[numbers[i]]
+        return False
+```
 
-# 54. (06-08)
+更优的方法：
 
-# 55.
+题目里写了数组里数字的范围保证在0 ~ n-1 之间，所以可以利用现有数组设置标志，当一个数字被访问过后，可以设置对应位上的数 + n，之后再遇到相同的数时，会发现对应位上的数已经大于等于n了，那么直接返回这个数即可。
 
-# 56.
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    # 这里要特别注意~找到任意重复的一个值并赋值到duplication[0]
+    # 函数返回True/False
+    def duplicate(self, numbers, duplication):
+        # write code here
+        n = len(numbers)
+        if n == 0:
+            return False
+        for i in range(n):
+            index = numbers[i]
+            if index >= n:
+                index -= n
+            if numbers[index] >= n:
+                duplication[0] = index
+                return True
+            numbers[index] += n
+        return False
+```
 
-# 57.
+# 51. 构建乘积数组
 
-# 58. 
+给定一个数组$A[0,1,...,n-1]$, 请构建一个数组$B[0,1,...,n-1]$, 其中B中的元素$B[i]=A[0]*A[1]*...*A[i-1]*A[i+1]*...*A[n-1]$。不能使用除法。
 
-# 59.
 
-# 60.
 
-# 61.
+思路：可以把$B[i]=A[0]*A[1]*...*A[i-1]*A[i+1]*...*A[n-1]$看成$C[i] = A[0]*A[1]*...*A[i-1]$和$D[i] = A[i+1]*A[i+2]*...*A[n-2]*A[n-1]$两部分的乘积。
 
-# 62.
+<img src='pics/image-20190609194056454.png' style="zoom:88%" >
 
-# 63.
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def multiply(self, A):
+        # write code here
+        B = []
+        for i,a in enumerate(A):
+            left_A = A[:i]
+            right_A = A[i+1:]
+            prod_left = 1
+            prod_right = 1
+            if left_A:
+                for la in left_A:
+                    prod_left*=la
+            if right_A:
+                for la in right_A:
+                    prod_right*=la
+            B.append(prod_left*prod_right)
+        return B
+```
 
-# 64.
+考虑到：$C[i] = C[i-1] * A[i-1]$和$D[i] = D[i+1] * A[i+1]$，可以进一步优化。
 
-# 65.
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def multiply(self, A):
+        # write code here
+        head = [1]
+        tail = [1]
+        for i in range(len(A)-1):
+            head.append(A[i]*head[i])
+            tail.append(A[-i-1]*tail[i])
+        return [head[j]*tail[-j-1] for j in range(len(head))]
+```
 
-# 66.  (06-09)
+# 52. 正则表达式匹配
+
+请实现一个函数用来匹配包括`'.'`和`'*'`的正则表达式。模式中的字符`'.'`表示任意一个字符，而`'*'`表示它前面的字符可以出现任意次（包含0次）。 在本题中，匹配是指字符串的所有字符匹配整个模式。例如，字符串`"aaa"`与模式`"a.a"`和`"ab*ac*a"`匹配，但是与`"aa.a"`和`"ab*a"`均不匹配
+
+
+
+# 53. 表示数值的字符串
+
+请实现一个函数用来判断字符串是否表示数值（包括整数和小数）。例如，字符串`"+100","5e2","-123","3.1416"和"-1E-16"`都表示数值。 但是`"12e","1a3.14","1.2.3","+-5"和"12e+4.3"`都不是。
+
+# 54. 字符流中第一个不重复的字符
+
+请实现一个函数用来找出字符流中第一个只出现一次的字符。例如，当从字符流中只读出前两个字符"go"时，第一个只出现一次的字符是"g"。当从该字符流中读出前六个字符“google"时，第一个只出现一次的字符是"l"。
+
+如果当前字符流没有存在出现一次的字符，返回`#`字符。
+
+# 55. 链表中环的入口结点
+
+给一个链表，若其中包含环，请找出该链表的环的入口结点，否则，输出null。
+
+# 56. 删除链表中重复的结点
+
+在一个排序的链表中，存在重复的结点，请删除该链表中重复的结点，重复的结点不保留，返回链表头指针。 例如，链表`1->2->3->3->4->4->5` 处理后为 `1->2->5`
+
+# 57. 二叉树的下一个结点
+
+给定一个二叉树和其中的一个结点，请找出中序遍历顺序的下一个结点并且返回。注意，树中的结点不仅包含左右子结点，同时包含指向父结点的指针。
+
+# 58. 对称的二叉树
+
+请实现一个函数，用来判断一颗二叉树是不是对称的。注意，如果一个二叉树同此二叉树的镜像是同样的，定义其为对称的。
+
+# 59. 按之字形顺序打印二叉树
+
+请实现一个函数按照之字形打印二叉树，即第一行按照从左到右的顺序打印，第二层按照从右至左的顺序打印，第三行按照从左到右的顺序打印，其他行以此类推。
+
+# 60. 把二叉树打印成多行
+
+从上到下按层打印二叉树，同一层结点从左至右输出。每一层输出一行。
+
+# 61. 序列化二叉树
+
+请实现两个函数，分别用来序列化和反序列化二叉树
+
+# 62. 二叉搜索树的第K个节点
+
+给定一棵二叉搜索树，请找出其中的第k小的结点。例如， （5，3，7，2，4，6，8）    中，按结点数值大小顺序第三小结点的值为4。
+
+# 63. 数据流中的中位数
+
+如何得到一个数据流中的中位数？如果从数据流中读出奇数个数值，那么中位数就是所有数值排序之后位于中间的数值。如果从数据流中读出偶数个数值，那么中位数就是所有数值排序之后中间两个数的平均值。我们使用Insert()方法读取数据流，使用GetMedian()方法获取当前读取数据的中位数。
+
+# 64. 滑动窗口的最大值
+
+给定一个数组和滑动窗口的大小，找出所有滑动窗口里数值的最大值。例如，如果输入数组{2,3,4,2,6,2,5,1}及滑动窗口的大小3，那么一共存在6个滑动窗口，他们的最大值分别为{4,4,6,6,6,5}； 针对数组{2,3,4,2,6,2,5,1}的滑动窗口有以下6个： {[2,3,4],2,6,2,5,1}， {2,[3,4,2],6,2,5,1}， {2,3,[4,2,6],2,5,1}， {2,3,4,[2,6,2],5,1}， {2,3,4,2,[6,2,5],1}， {2,3,4,2,6,[2,5,1]}。
+
+# 65. 矩阵中的路径
+
+请设计一个函数，用来判断在一个矩阵中是否存在一条包含某字符串所有字符的路径。路径可以从矩阵中的任意一个格子开始，每一步可以在矩阵中向左，向右，向上，向下移动一个格子。如果一条路径经过了矩阵中的某一个格子，则之后不能再次进入这个格子。 例如 a b c e s f c s a d e e 这样的3 X 4 矩阵中包含一条字符串"bcced"的路径，但是矩阵中不包含"abcb"路径，因为字符串的第一个字符b占据了矩阵中的第一行第二个格子之后，路径不能再次进入该格子。
+
+# 66. 机器人的运动范围
+
+地上有一个m行和n列的方格。一个机器人从坐标0,0的格子开始移动，每一次只能向左，右，上，下四个方向移动一格，但是不能进入行坐标和列坐标的数位之和大于k的格子。 例如，当k为18时，机器人能够进入方格（35,37），因为3+5+3+7 = 18。但是，它不能进入方格（35,38），因为3+5+3+8 = 19。请问该机器人能够达到多少个格子？
+
+#  
 
 
 
