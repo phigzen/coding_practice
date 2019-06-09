@@ -2826,11 +2826,95 @@ class Solution:
 
 在一个排序的链表中，存在重复的结点，请删除该链表中重复的结点，重复的结点不保留，返回链表头指针。 例如，链表`1->2->3->3->4->4->5` 处理后为 `1->2->5`
 
+思路：
 
+删除重复结点，只需要记录当前结点前的最晚访问过的不重复结点pPre、当前结点pCur、指向当前结点后面的结点pNext的三个指针即可。如果当前节点和它后面的几个结点数值相同，那么这些结点都要被剔除，然后更新pPre和pCur；如果不相同，则直接更新pPre和pCur。
+
+需要考虑的是，如果第一个结点是重复结点我们该怎么办？这里我们分别处理一下就好，如果第一个结点是重复结点，那么就把头指针pHead也更新一下。
+
+```python
+# -*- coding:utf-8 -*-
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+class Solution:
+    def deleteDuplication(self, pHead):
+        # write code here
+        pPre = None # 最晚访问过的不重复节点
+        pCur = pHead # 当前节点
+        pNext = None # 当前节点的下一个节点
+        while pCur is not None:
+            if (pCur.next is not None) and (pCur.val == pCur.next.val): # 如果有相等：
+                pNext = pCur.next
+                while (pNext.next is not None) and (pNext.next.val == pCur.val):
+                    pNext = pNext.next
+                if pCur == pHead: # 如果是头节点，直接从pNext的下一个节点开始
+                    pHead = pNext.next
+                else:
+                    pPre.next = pNext.next
+                pCur = pNext.next
+            else: # 如果没有相等：
+                pPre = pCur
+                pCur = pCur.next
+        return pHead
+```
+
+思路一样的不同实现：
+
+```python
+class ListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+class Solution:
+    def deleteDuplication(self, pHead):
+        # write code here
+        if pHead == None or pHead.next == None:
+            return pHead
+        new_head = ListNode(-1)
+        new_head.next = pHead
+        pre = new_head
+        p = pHead
+        nex = None
+        while (p is not None) and (p.next is not None):
+            nex = p.next
+            if p.val == nex.val:
+                while nex != None and nex.val == p.val:
+                    nex = nex.next
+                pre.next = nex
+                p = nex
+            else:
+                pre = p
+                p = p.next
+        return new_head.next
+
+```
+
+方法二：借助于列表把链表中的值存下来，然后再复原。
+
+```python
+class Solution:
+    def deleteDuplication(self, pHead):
+        res = []
+        while pHead:
+            res.append(pHead.val)
+            pHead = pHead.next
+        res = list(filter(lambda c: res.count(c) == 1, res))
+        dummy = ListNode(0)
+        pre = dummy
+        for i in res:
+            node = ListNode(i)
+            pre.next = node
+            pre = pre.next
+        return dummy.next
+```
 
 # 57. 二叉树的下一个结点
 
 给定一个二叉树和其中的一个结点，请找出中序遍历顺序的下一个结点并且返回。注意，树中的结点不仅包含左右子结点，同时包含指向父结点的指针。
+
+
 
 # 58. 对称的二叉树
 
