@@ -1303,7 +1303,7 @@ class Solution:
 
 # 31. 整数中1出现的次数(从1到n整数中1出现的次数)
 
-求出1-13的整数中1出现的次数,并算出100-1300的整数中1出现的次数？为此他特别数了一下1-13中包含1的数字有1、10、11、12、13因此共出现6次,但是对于后面问题他就没辙了。ACMer希望你们帮帮他,并把问题更加普遍化,可以很快的求出任意非负整数区间中1出现的次数（从1 到 n 中1出现的次数）。
+求出`1~13`的整数中1出现的次数,并算出`100~1300`的整数中1出现的次数？为此他特别数了一下`1~13`中包含1的数字有1、10、11、12、13因此共出现6次,但是对于后面问题他就没辙了。ACMer希望你们帮帮他,并把问题更加普遍化,可以很快的求出任意非负整数区间中1出现的次数（从1 到 n 中1出现的次数）。
 
 ```python
 # -*- coding:utf-8 -*-
@@ -2723,19 +2723,110 @@ class Solution:
             self.count[char] += 1
 ```
 
-
-
-
-
-# 55. 链表中环的入口结点
+# ?55. 链表中环的入口结点
 
 给一个链表，若其中包含环，请找出该链表的环的入口结点，否则，输出null。
 
 
 
+思路一：
+
+可以用两个指针来解决这个问题。先定义两个指针P1和P2指向链表的头结点。如果链表中的环有n个结点，指针P1先在链表上向前移动n步，然后两个指针以相同的速度向前移动。当第二个指针指向的入口结点时，第一个指针已经围绕着揍了一圈又回到了入口结点。
+
+以下图为例，指针P1和P2在初始化时都指向链表的头结点。由于环中有4个结点，指针P1先在链表上向前移动4步。接下来两个指针以相同的速度在链表上向前移动，直到它们相遇。它们相遇的结点正好是环的入口结点。
+
+![](pics/basis_55_1.png)
+
+**现在，关键问题在于怎么知道环中有几个结点呢？**
+
+可以使用快慢指针，一个每次走一步，一个每次走两步。如果两个指针相遇，表明链表中存在环，并且两个指针相遇的结点一定在环中。
+
+随后，我们就从相遇的这个环中结点出发，一边继续向前移动一边计数，当再次回到这个结点时，就可以得到环中结点数目了。
+
+```python
+class Solution:
+    def EntryNodeOfLoop(self, pHead):
+        # write code here
+        meet_node = self.MeetNode(pHead)
+        if meet_node is None:
+            return None
+        # 得到环中的节点个数
+        loop_nodes = 1 # 环中节点个数
+        p1 = meet_node
+        while p1.next != meet_node:
+            loop_nodes += 1
+            p1 = p1.next
+        # 目前已经得到了环中节点个数loop_nodes，和环中个一个节点meetnode，如何找到环的入口？
+        # 一个指针p1从根节点开始往后走loop_nodes步，然后再让一个节点p2指向头结点，p1和p2同时往后移动，
+        # 当p1与p2相交时，此时的点就是环的入口节点
+        p1 = pHead
+        for i in range(loop_nodes):
+            p1 = p1.next
+        p2 = pHead
+        while p1 != p2:
+            p1 = p1.next
+            p2 = p2.next
+        return p1
+    def MeetNode(self, pHead):
+        if pHead == None:
+            return None
+        slow = pHead.next
+        if slow == None:
+            return None
+        fast = slow.next
+        while slow != None and fast != None:
+            if slow == fast:
+                return slow
+            slow = slow.next
+            fast = fast.next
+            if slow != fast:
+                fast = fast.next
+        return None
+```
+
+简单的写法：
+
+```python
+# -*- coding:utf-8 -*-
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+class Solution:
+    def EntryNodeOfLoop(self, pHead):
+        # write code here
+        slow, fast = pHead, pHead
+        while fast and fast.next:
+            slow=slow.next
+            fast=fast.next.next
+            if slow==fast:
+                slow2=pHead
+                while slow!=slow2:
+                    slow=slow.next
+                    slow2=slow2.next
+                return slow
+```
+
+思路二：遍历这个链表，把链表每个元素记录在list里，然后一旦遇到了重复节点则存在环，不然就不存在。
+
+```python
+class Solution:
+    def EntryNodeOfLoop(self, pHead):
+        # write code here
+        linkls = []
+        while pHead:
+            if pHead in linkls:
+                return pHead
+            linkls.append(pHead)
+            pHead = pHead.next
+        return None
+```
+
 # 56. 删除链表中重复的结点
 
 在一个排序的链表中，存在重复的结点，请删除该链表中重复的结点，重复的结点不保留，返回链表头指针。 例如，链表`1->2->3->3->4->4->5` 处理后为 `1->2->5`
+
+
 
 # 57. 二叉树的下一个结点
 
