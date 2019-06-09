@@ -2586,15 +2586,109 @@ class Solution:
         return [head[j]*tail[-j-1] for j in range(len(head))]
 ```
 
-# 52. 正则表达式匹配
+# ?52. 正则表达式匹配
 
 请实现一个函数用来匹配包括`'.'`和`'*'`的正则表达式。模式中的字符`'.'`表示任意一个字符，而`'*'`表示它前面的字符可以出现任意次（包含0次）。 在本题中，匹配是指字符串的所有字符匹配整个模式。例如，字符串`"aaa"`与模式`"a.a"`和`"ab*ac*a"`匹配，但是与`"aa.a"`和`"ab*a"`均不匹配
 
-
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    # s, pattern都是字符串
+    def match(self, s, pattern):
+        # 如果s与pattern都为空，则True
+        if len(s) == 0 and len(pattern) == 0:
+            return True
+        # 如果s不为空，而pattern为空，则False
+        elif len(s) != 0 and len(pattern) == 0:
+            return False
+        # 如果s为空，而pattern不为空，则需要判断
+        elif len(s) == 0 and len(pattern) != 0:
+            # pattern中的第二个字符为*，则pattern后移两位继续比较
+            if len(pattern) > 1 and pattern[1] == '*':
+                return self.match(s, pattern[2:])
+            else:
+                return False
+        # s与pattern都不为空的情况
+        else:
+            # pattern的第二个字符为*的情况
+            if len(pattern) > 1 and pattern[1] == '*':
+                # s与pattern的第一个元素不同，则s不变，pattern后移两位，相当于pattern前两位当成空
+                if s[0] != pattern[0] and pattern[0] != '.':
+                    return self.match(s, pattern[2:])
+                else:
+                    # 如果s[0]与pattern[0]相同，且pattern[1]为*，这个时候有三种情况
+                    # pattern后移2个，s不变；相当于把pattern前两位当成空，匹配后面的
+                    # pattern后移2个，s后移1个；相当于pattern前两位与s[0]匹配
+                    # pattern不变，s后移1个；相当于pattern前两位，与s中的多位进行匹配，因为*可以匹配多位
+                    return self.match(s, pattern[2:]) or self.match(s[1:], pattern[2:]) or self.match(s[1:], pattern)
+            # pattern第二个字符不为*的情况
+            else:
+                if s[0] == pattern[0] or pattern[0] == '.':
+                    return self.match(s[1:], pattern[1:])
+                else:
+                    return False
+```
 
 # 53. 表示数值的字符串
 
 请实现一个函数用来判断字符串是否表示数值（包括整数和小数）。例如，字符串`"+100","5e2","-123","3.1416"和"-1E-16"`都表示数值。 但是`"12e","1a3.14","1.2.3","+-5"和"12e+4.3"`都不是。
+
+
+
+表示数值的字符串遵循如下模式：
+
+`[sign]integral-digits[.[fractional-digits]][e|E[sign]exponential-digits]`
+
+其中，(`[`和`]`之间的为可有可无的部分)。
+
+在数值之前可能有一个表示正负的`+`或者`-`。接下来是若干个0到9的数位表示数值的整数部分（在某些小数里可能没有数值的整数部分）。如果数值是一个小数，那么在小数后面可能会有若干个0到9的数位表示数值的小数部分。如果数值用科学记数法表示，接下来是一个`e`或者`E`，以及紧跟着的一个整数（可以有正负号）表示指数。
+
+判断一个字符串是否符合上述模式时，首先看第一个字符是不是正负号。如果是，在字符串上移动一个字符，继续扫描剩余的字符串中0到9的数位。如果是一个小数，则将遇到小数点。另外，如果是用科学记数法表示的数值，在整数或者小数的后面还有可能遇到`e`或者`E`。
+
+```python
+class Solution:
+    # s字符串
+    def isNumeric(self, s):
+        # write code here
+        if not s:
+            return False
+        has_point = False
+        has_e = False
+        for i in range(len(s)):
+            if s[i]=='E' or s[i] =='e':
+                if has_e: #不能出现两个e or E
+                    return False
+                else:
+                    has_e = True
+                    if (i == len(s)-1) or (i == 0):    #e不能出现在最后面或者最前面
+                        return False
+            elif s[i] =='+' or s[i] =='-':
+                if (i != 0) and (s[i-1] != 'e') and (s[i-1] != 'E'): #符号位，必须是跟在e后面或者第一位
+                    return False
+                if i == len(s)-1:        # 不能出现在最后面
+                    return False
+            elif s[i] == '.':             #小数点不能出现两次；
+                if has_point or has_e:   #如果已经出现过e了，就不能再出现小数点，e后面只能是整数
+                    return False
+                else:
+                    has_point = True
+                    if i == len(s)-1:    #不能出现在最后面
+                        return False
+            else:
+                if s[i]<'0' or s[i]>'9': #其他字符必须是‘0’到‘9’之间的
+                    return False
+        return True
+```
+
+正则表达式：
+
+```python
+# -*- coding:utf-8 -*-
+import re
+class Solution:
+    def isNumeric(self, s):
+        return re.match(r"^[\+\-]?[0-9]*(\.[0-9]+)?([eE][\+\-]?[0-9]+)?$",s)
+```
 
 # 54. 字符流中第一个不重复的字符
 
