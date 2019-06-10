@@ -2914,43 +2914,364 @@ class Solution:
 
 给定一个二叉树和其中的一个结点，请找出中序遍历顺序的下一个结点并且返回。注意，树中的结点不仅包含左右子结点，同时包含指向父结点的指针。
 
+思路：需要分情况讨论：下图中的二叉树中序遍历的结果为：{d, b, h, e, i, a, f, c, g}
 
+![image-20190610220204081](pics/image-20190610220204081.png)
+
+（1）如果一个节点有右子树，则下一个节点就是它的右子树中的最左子节点，如图中b的下一个节点是h
+
+（2）如果一个节点没有右子树，如果节点是它父节点的左子节点，那么它的下一个节点就是它的父节点。如图中节点d的下一个节点就是b，f的下一个节点是c
+
+（3）如果一个节点没有右子树，且是父节点的右子节点。我们可以沿着父节点的指针一直向上遍历，直到找到一个是其父节点的左子节点的节点，该节点的父节点即为下一个节点。如图中的i，沿着父节点遍历，b是其父节点a的左子节点，则b的父节点a即为下一个节点。同理g的下一个节点，我们沿着g的父节点一直向上遍历，发现没有一个节点是它父节点的左子节点，于是g就是最后一个节点。
+
+```python
+# -*- coding:utf-8 -*-
+# class TreeLinkNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+#         self.next = None
+class Solution:
+    def GetNext(self, pNode):
+        # write code here
+        if pNode is None:
+            return None
+        if pNode.right is not None:
+            result = pNode.right
+            while result.left is not None:
+                result = result.left
+            return result
+        else:
+            if pNode.next is None:
+                return None
+            if pNode == pNode.next.left:
+                return pNode.next
+            else:
+                result = pNode.next
+                while (result.next is not None):
+                    
+                    if result.next.left == result:
+                        return result.next
+                    result = result.next
+                return None
+```
+
+可以更简单：
+
+```python
+class Solution:
+    def GetNext(self, pNode):
+        # write code here
+        if pNode.right is not None:#有右子树
+            p=pNode.right
+            while p.left is not None:
+                p=p.left
+            return p
+        while pNode.next is not None:#无右子树，则找第一个当前节点是父节点左孩子的节点
+            if(pNode.next.left==pNode):
+                return pNode.next
+            pNode = pNode.next#沿着父节点向上遍历
+        return None #到了根节点仍没找到，则返回空
+
+```
 
 # 58. 对称的二叉树
 
 请实现一个函数，用来判断一颗二叉树是不是对称的。注意，如果一个二叉树同此二叉树的镜像是同样的，定义其为对称的。
 
-# 59. 按之字形顺序打印二叉树
+![image-20190610230602369](pics/image-20190610230602369.png)
 
-请实现一个函数按照之字形打印二叉树，即第一行按照从左到右的顺序打印，第二层按照从右至左的顺序打印，第三行按照从左到右的顺序打印，其他行以此类推。
+递归比较： 同时进行根左右（前序遍历）和根右左的遍历，并在遍历的时候比较节点。
+
+```python
+
+# -*- coding:utf-8 -*-
+class TreeNode:
+    def __init__(self, x):
+        self.val = x
+        self.left = None
+        self.right = None
+
+class Solution:
+    def isSymmetrical(self, pRoot):
+        if pRoot is None:
+            return True
+        return self.compare(pRoot, pRoot)
+
+    def compare(self, pRoot, pRoot1):
+        if (pRoot is None) and (pRoot1 is None):
+            return True
+        if (pRoot is None) or (pRoot1 is None):
+            return False
+        if pRoot.val != pRoot1.val :
+            return False
+        return self.compare(pRoot.left,pRoot1.right) and self.compare(pRoot.right,pRoot1.left)
+      
+# compare 函数也可以这么写：
+    def compare(self, pRoot, pRoot1):
+        if (pRoot is None) and (pRoot1 is None):
+            return True
+        if (pRoot is None) or (pRoot1 is None):
+            return False
+        if pRoot.val == pRoot1.val :
+            return self.compare(pRoot.left,pRoot1.right) and self.compare(pRoot.right,pRoot1.left)
+        else:
+            return False
+
+```
+
+# ?59. 按之字形顺序打印二叉树
+
+请实现一个函数按照之字形打印二叉树，即第一行按照从左到右的顺序打印，第二层按照从右至左的顺序打印，第三行按照从左到右的顺序打印，其他行以此类推。(P176)
+
+![image-20190610232531453](pics/image-20190610232531453.png)
+
+![image-20190610232516152](pics/image-20190610232516152.png)
+
+思路：借助于两个栈。
+
+```python
+# -*- coding:utf-8 -*-
+class TreeNode:
+    def __init__(self, x):
+        self.val = x
+        self.left = None
+        self.right = None
+        
+class Solution:
+    def Print(self, pRoot):
+        resultArray = []
+        if pRoot is None:
+            return resultArray
+        curLayerNodes = [pRoot]
+        isEvenLayer = True
+        while curLayerNodes:
+            curLayerValues = []
+            nextLayerNodes = []
+            isEvenLayer = not isEvenLayer
+            for node in curLayerNodes:
+                curLayerValues.append(node.val)
+                if node.left:
+                    nextLayerNodes.append(node.left)
+                if node.right:
+                    nextLayerNodes.append(node.right)
+            curLayerNodes = nextLayerNodes
+            resultArray.append(curLayerValues[::-1]) if isEvenLayer else resultArray.append(curLayerValues)
+        return resultArray
+```
 
 # 60. 把二叉树打印成多行
 
-从上到下按层打印二叉树，同一层结点从左至右输出。每一层输出一行。
+从上到下按层打印二叉树，同一层结点从左至右输出。每一层输出一行。(P174)
+
+<img src='pics/image-20190611001950677.png' style='zoom:66%'>
+
+比上一题更简单一些：
+
+```python
+# -*- coding:utf-8 -*-
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+class Solution:
+    # 返回二维列表[[1,2],[4,5]]
+    def Print(self, pRoot):
+        # write code here
+        result = []
+        if pRoot is None:
+            return result
+        node = [pRoot]
+        while len(node)>0:
+            cur = []
+            new_node=[]
+            for i in node:
+                cur.append(i.val)
+                if i.left is not None:
+                    new_node.append(i.left)
+                if i.right is not None:
+                    new_node.append(i.right)
+            node = new_node
+            result.append(cur)
+        return result
+```
 
 # 61. 序列化二叉树
 
-请实现两个函数，分别用来序列化和反序列化二叉树
+请实现两个函数，分别用来序列化和反序列化二叉树(P194)
+
+思路：可以根据前序遍历的顺序来序列化二叉树，前序遍历从根节点开始的。在遍历二叉树碰到 nullptr 指针时，这些 nullptr 指针序列化为一个特殊的字符（如 `$`）。另外，节点的数值之间要用一个特殊字符（如`，`）隔开。
+
+```python
+
+# -*- coding:utf-8 -*-
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+class Solution:
+    def __init__(self):
+        self.flag = -1
+    def Serialize(self, root):
+        # write code here
+        if root is None:
+            return '$,'
+        return str(root.val)+','+self.Serialize(root.left)+self.Serialize(root.right)
+    def Deserialize(self, s):
+        # write code here
+        self.flag += 1
+        l = s.split(',')
+        if self.flag >= len(s):
+            return None
+        root = None
+        if l[self.flag] != '$':
+            root = TreeNode(int(l[self.flag]))
+            root.left = self.Deserialize(s)
+            root.right = self.Deserialize(s)
+        return root
+```
+
+```python
+# -*- coding:utf-8 -*-
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+class Solution:
+    def Serialize(self, root):
+        # write code here
+        if root==None:
+            return "$"
+        return str(root.val)+","+self.Serialize(root.left)+","+self.Serialize(root.right)
+             
+    def Deserialize(self, s):
+        # write code here
+        root,index=self.deserialize(s.split(","),0)
+        return root
+    def deserialize(self,s,index):
+        if s[index]=="$":
+            return None,index+1
+        root=TreeNode(int(s[index]))
+        index+=1
+        root.left,index=self.deserialize(s,index)
+        root.right,index=self.deserialize(s,index)
+        return root,index
+```
 
 # 62. 二叉搜索树的第K个节点
 
-给定一棵二叉搜索树，请找出其中的第k小的结点。例如， （5，3，7，2，4，6，8）    中，按结点数值大小顺序第三小结点的值为4。
+给定一棵二叉搜索树，请找出其中的第k小的节点。例如， （5，3，7，2，4，6，8）    中，按节点数值大小顺序第三小节点的值为4。
 
-# 63. 数据流中的中位数
+<img src='pics/image-20190611011212848.png' style='zoom:66%'>
+
+如果按照中序遍历的顺序遍历一棵二叉搜索树，则遍历序列的数值是递增排序的。例如，图 中二叉搜素树的中序遍历序列是{2,3,4,5,6,7,8}。因此，只需要用中序遍历算法遍历一棵二叉搜索树，我们就很容易找出它的第 k 个节点。
+
+思路：中序遍历将节点存于列表，返回index为k-1的节点即可。
+
+```python
+# -*- coding:utf-8 -*-
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+class Solution:
+    # 返回对应节点TreeNode
+    def KthNode(self, pRoot, k):
+        # write code here
+        if (pRoot is None) or (k<=0):
+            return None
+        self.result = []
+        self.med_traversal(pRoot)
+        if len(self.result) < k:
+            return None
+        return self.result[k-1]
+    
+    def med_traversal(self, node):
+        if node is None:
+            return None
+        self.med_traversal(node.left)
+        self.result.append(node)
+        self.med_traversal(node.right)
+
+```
+
+# ?63. 数据流中的中位数
 
 如何得到一个数据流中的中位数？如果从数据流中读出奇数个数值，那么中位数就是所有数值排序之后位于中间的数值。如果从数据流中读出偶数个数值，那么中位数就是所有数值排序之后中间两个数的平均值。我们使用Insert()方法读取数据流，使用GetMedian()方法获取当前读取数据的中位数。
+
+?学习这些数据结构。
+
+![image-20190611012744804](pics/image-20190611012744804.png)
+
+```python
+# -*- coding:utf-8 -*-
+class Solution:
+    def __init__(self):
+        self.data=[]
+    def Insert(self, num):
+        # write code here
+        self.data.append(num)
+        self.data.sort()
+    def GetMedian(self,data):
+        # write code here
+        length=len(self.data)
+        if length%2==0:
+            return (self.data[length//2]+self.data[length//2-1])/2.0
+        else:
+            return self.data[int(length//2)]
+```
 
 # 64. 滑动窗口的最大值
 
 给定一个数组和滑动窗口的大小，找出所有滑动窗口里数值的最大值。例如，如果输入数组{2,3,4,2,6,2,5,1}及滑动窗口的大小3，那么一共存在6个滑动窗口，他们的最大值分别为{4,4,6,6,6,5}； 针对数组{2,3,4,2,6,2,5,1}的滑动窗口有以下6个： {[2,3,4],2,6,2,5,1}， {2,[3,4,2],6,2,5,1}， {2,3,[4,2,6],2,5,1}， {2,3,4,[2,6,2],5,1}， {2,3,4,2,[6,2,5],1}， {2,3,4,2,6,[2,5,1]}。
 
+```python 
+# -*- coding:utf-8 -*-
+class Solution:
+    def maxInWindows(self, num, size):
+        # write code here
+        if len(num)<size or size<=0:
+            return []
+        result=[]
+        for i in range(len(num)-size+1):
+            result.append(max(num[i:i+size]))
+        return result
+```
+
 # 65. 矩阵中的路径
 
 请设计一个函数，用来判断在一个矩阵中是否存在一条包含某字符串所有字符的路径。路径可以从矩阵中的任意一个格子开始，每一步可以在矩阵中向左，向右，向上，向下移动一个格子。如果一条路径经过了矩阵中的某一个格子，则之后不能再次进入这个格子。 例如 a b c e s f c s a d e e 这样的3 X 4 矩阵中包含一条字符串"bcced"的路径，但是矩阵中不包含"abcb"路径，因为字符串的第一个字符b占据了矩阵中的第一行第二个格子之后，路径不能再次进入该格子。
 
+a    b    c    e 
+
+s     f    c    s 
+
+a    d    e    e
+
+思路：回溯法。
+
+
+
+```python
+
+```
+
+
+
 # 66. 机器人的运动范围
 
 地上有一个m行和n列的方格。一个机器人从坐标0,0的格子开始移动，每一次只能向左，右，上，下四个方向移动一格，但是不能进入行坐标和列坐标的数位之和大于k的格子。 例如，当k为18时，机器人能够进入方格（35,37），因为3+5+3+7 = 18。但是，它不能进入方格（35,38），因为3+5+3+8 = 19。请问该机器人能够达到多少个格子？
+
+```python
+
+```
+
+
 
 #  
 
