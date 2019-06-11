@@ -1,9 +1,3 @@
-## Python first！！！
-
-## THEN CPP ！！！
-
-## Focus on ！！！
-
 # 1. 二维数组中的查找
 
 在一个二维数组中（每个一维数组的长度相同），每一行都按照从左到右递增的顺序排序，每一列都按照从上到下递增的顺序排序。请完成一个函数，输入这样的一个二维数组和一个整数，判断数组中是否含有该整数。
@@ -3243,9 +3237,9 @@ class Solution:
         return result
 ```
 
-# 65. 矩阵中的路径
+# ?65. 矩阵中的路径
 
-请设计一个函数，用来判断在一个矩阵中是否存在一条包含某字符串所有字符的路径。路径可以从矩阵中的任意一个格子开始，每一步可以在矩阵中向左，向右，向上，向下移动一个格子。如果一条路径经过了矩阵中的某一个格子，则之后不能再次进入这个格子。 例如 a b c e s f c s a d e e 这样的3 X 4 矩阵中包含一条字符串"bcced"的路径，但是矩阵中不包含"abcb"路径，因为字符串的第一个字符b占据了矩阵中的第一行第二个格子之后，路径不能再次进入该格子。
+请设计一个函数，用来判断在一个矩阵中是否存在一条包含某字符串所有字符的路径。路径可以从矩阵中的任意一个格子开始，每一步可以在矩阵中向左，向右，向上，向下移动一个格子。如果一条路径经过了矩阵中的某一个格子，则之后不能再次进入这个格子。 例如 a b c e s f c s a d e e 这样的3 X 4 矩阵中包含一条字符串"bcced"的路径，但是矩阵中不包含"abcb"路径，因为字符串的第一个字符b占据了矩阵中的第一行第二个格子之后，路径不能再次进入该格子。(P89)
 
 a    b    c    e 
 
@@ -3255,20 +3249,96 @@ a    d    e    e
 
 思路：回溯法。
 
+<img src='pics/image-20190611084923588.png' style='zoom:88%'>
 
+<img src='pics/image-20190611084913858.png' style='zoom:50%'>
 
 ```python
-
+# -*- coding:utf-8 -*-
+#回溯法
+#遍历矩阵中的每一个位置
+class Solution:
+    def hasPath(self, matrix, rows, cols, path):
+        # write code here
+        if not matrix:
+            return False
+        if not path:
+            return True
+        x = [list(matrix[cols*i:cols*i+cols]) for i in range(rows)] # 数组转换为矩阵二维数组
+        for i in range(rows):
+            for j in range(cols):
+                if self.exist_helper(x, i, j, path):
+                    return True
+        return False
+    
+    def exist_helper(self, matrix, i, j, p):
+        if matrix[i][j] == p[0]: # 路径头
+            if not p[1:]: # 后面没有了，说明路径寻找成功
+                return True
+            matrix[i][j] = ''
+            if i > 0 and self.exist_helper(matrix, i-1, j, p[1:]):
+                return True
+            if i < len(matrix)-1 and self.exist_helper(matrix, i+1, j ,p[1:]):
+                return True
+            if j > 0 and self.exist_helper(matrix, i, j-1, p[1:]):
+                return True
+            if j < len(matrix[0])-1 and self.exist_helper(matrix, i, j+1, p[1:]):
+                return True
+            matrix[i][j] = p[0]
+            return False
+        else:
+            return False
 ```
-
-
 
 # 66. 机器人的运动范围
 
-地上有一个m行和n列的方格。一个机器人从坐标0,0的格子开始移动，每一次只能向左，右，上，下四个方向移动一格，但是不能进入行坐标和列坐标的数位之和大于k的格子。 例如，当k为18时，机器人能够进入方格（35,37），因为3+5+3+7 = 18。但是，它不能进入方格（35,38），因为3+5+3+8 = 19。请问该机器人能够达到多少个格子？
+地上有一个m行和n列的方格。一个机器人从坐标0,0的格子开始移动，每一次只能向左，右，上，下四个方向移动一格，但是不能进入行坐标和列坐标的数位之和大于k的格子。 例如，当k为18时，机器人能够进入方格（35,37），因为3+5+3+7 = 18。但是，它不能进入方格（35,38），因为3+5+3+8 = 19。请问该机器人能够达到多少个格子？(P92)
+
+思路：类似于上一题，回溯法。首先将矩阵全部置1，遍历能够到达的点，将遍历过的点标记为0，并计数+1。
 
 ```python
+class Solution:
+    def __init__(self):
+        self.count = 0
 
+    def movingCount(self, threshold, rows, cols):
+        # write code here
+        arr = [[1 for i in range(cols)] for j in range(rows)]
+        self.findway(arr, 0, 0, threshold)
+        return self.count
+
+    def findway(self, arr, i, j, k):
+        if i < 0 or j < 0 or i >= len(arr) or j >= len(arr[0]):
+            return 0
+        # tmpi = list(map(int, list(str(i)))) # 计算和
+        # tmpj = list(map(int, list(str(j)))) # 计算和
+        # sum_ij = sum(tmpi) + sum(tmpj)
+        sum_ij = self.get_sum(i,j)
+        if sum_ij > k or arr[i][j] != 1:
+            return 0
+        arr[i][j] = 0
+        self.count += 1
+        self.findway(arr, i + 1, j, k)
+        self.findway(arr, i - 1, j, k)
+        self.findway(arr, i, j + 1, k)
+        self.findway(arr, i, j - 1, k)
+        
+    def get_sum(self,i,j):
+        if i <= 9:
+            sum_i = i
+        if j <= 9:
+            sum_j = j
+        sum_i = 0
+        sum_j = 0
+        while i>=10:
+            sum_i+=i%10
+            i/=10
+        sum_i+=i
+        while j>=10:
+            sum_j+=j%10
+            j/=10
+        sum_j+=j
+        return sum_i+sum_j
 ```
 
 
