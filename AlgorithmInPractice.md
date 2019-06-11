@@ -3341,11 +3341,3 @@ class Solution:
         return sum_i+sum_j
 ```
 
-
-
-#  
-
-
-
-
-
