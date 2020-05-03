@@ -150,12 +150,6 @@ class Solution:
 
 
 
-
-
-
-
-
-
 push/pop/peek
 
 
@@ -168,6 +162,12 @@ deque, 全名double-ended queue, 即双端队列。是一种具有队列和栈�
 2. https://leetcode.com/problems/implement-queue-using-stacks/
 3. https://leetcode.com/problems/implement-stack-using-queues/
 
+
+
+
+
+
+
 #### Priority Queue: 优先队列
 
 实现机制：1. [Heap  (Binary, Binomial, Fibonacci)](https://en.wikipedia.org/wiki/Heap_(data_structure)) 2. Binary Search Tree
@@ -175,6 +175,10 @@ deque, 全名double-ended queue, 即双端队列。是一种具有队列和栈�
 https://leetcode.com/problems/kth-largest-element-in-a-stream
 
 https://leetcode.com/problems/sliding-window-maximum
+
+
+
+
 
 
 
