@@ -33,10 +33,11 @@ class Solution:
         window, res = [], []
         for i, x in enumerate(nums):
             if i >= k and window[0] < i - k + 1:
-                window.pop(0) 
-            while window and nums[window[-1]] <= x: # 对于即将加入windmos的x，如果大于window
+                window.pop(0)
+            # 对于即将加入windmos的x，如果大于window
+            while window and nums[window[-1]] <= x:
                 window.pop()
-            window.append(i)
+            window.append(i)  # 添加的是下标
             if i >= k - 1:
                 res.append(nums[window[0]])
         return res
