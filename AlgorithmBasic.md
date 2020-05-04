@@ -206,11 +206,7 @@ if __name__ == '__main__':
 
 
 
-
-
-
-
-#### python实现的各种排序：
+#### Python实现的各种排序：
 
 ```python
 # 方法一：内置的sort()和sorted()

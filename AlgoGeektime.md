@@ -24,22 +24,6 @@ draft: true
 
 <img src="pics/image-20200502152249863.png" alt="image-20200502152249863" style="zoom:50%;" /> 
 
-
-
-[heapq](https://www.jianshu.com/p/801318c77ab5)
-
-## 堆
-
-堆是一种特殊的树。
-
-- 堆是一个完全二叉树；(完全二叉树要求，除了最后一层，其他层的节点个数都是满的，最后一层的节点都靠左排列。)
-
-- 堆中每一个节点的值都必须大于等于（或小于等于）其子树中每个节点的值。
-
-
-
-
-
 ## 快速排序
 
 
@@ -132,13 +116,13 @@ class Solution:
 
 
 
-## P8-9 堆栈和队列(Stack and Queue) 
+## P8-10 堆栈和队列(Stack and Queue) 
 
-#### Stack: FILO 先入后出
+#### 堆栈 Stack: FILO 先入后出
 
 - Array or linked list
 
-#### Queue: FIFO 先入先出
+#### 队列 Queue: FIFO 先入先出
 
 - Array or doubly linked list
 
@@ -154,27 +138,120 @@ push/pop/peek
 
 
 
-deque, 全名double-ended queue, 即双端队列。是一种具有队列和栈的性质的数据结构。双端队列中的元素可以从两端弹出，其限定插入和删除操作在表的两端进行。
-
 ##### Practice
 
-1. https://leetcode.com/problems/valid-parentheses/
+1. https://leetcode.com/problems/valid-parentheses/ (括号匹配问题，用栈)
+
+![image-20200503224945405](pics/image-20200503224945405.png)
+
+![image-20200503233827909](pics/image-20200503233827909.png)
+
+堆栈互相实现：
+
 2. https://leetcode.com/problems/implement-queue-using-stacks/
+
 3. https://leetcode.com/problems/implement-stack-using-queues/
 
 
 
+## P11-13 Priority Queue: 优先队列
+
+实现机制：
+
+1. [Heap  (Binary, Binomial, Fibonacci)](https://en.wikipedia.org/wiki/Heap_(data_structure)) 
+
+2. Binary Search Tree
+
+#### 堆 Heap
+
+堆这种数据结构的应用场景非常多，最经典的莫过于堆排序了。堆排序是一种原地的、时间复杂度为 O(nlogn) 的排序算法。[Python标准库模块之heapq](https://www.jianshu.com/p/801318c77ab5)
+
+常见操作：
+
+- **heapify** – This function converts a regular list to a heap. In the resulting heap the smallest element gets pushed to the index position 0. But rest of the data elements are not necessarily sorted.
+- **heappush** – This function adds an element to the heap without altering the current heap.
+- **heappop** – This function returns the smallest data element from the heap.
+- **heapreplace** – This function replaces the smallest data element with a new value supplied in the function.
+
+```python
+import heapq
+H = [21,1,45,78,3,5]
+# Use heapify to rearrange the elements
+heapq.heapify(H)
+print(H)
+# [1, 3, 5, 78, 21, 45]
+##########################################
+import heapq
+H = [21,1,45,78,3,5]
+# Covert to a heap
+heapq.heapify(H)
+print(H)
+# Add element
+heapq.heappush(H,8)
+print(H)
+"""
+[1, 3, 5, 78, 21, 45]
+[1, 3, 5, 78, 21, 45, 8]
+"""
+##########################################
+import heapq
+H = [21,1,45,78,3,5]
+# Create the heap
+heapq.heapify(H)
+print(H)
+# Remove element from the heap
+heapq.heappop(H)
+print(H)
+"""
+[1, 3, 5, 78, 21, 45]
+[3, 21, 5, 78, 45]
+"""
+##########################################
+import heapq
+H = [21,1,45,78,3,5]
+# Create the heap
+heapq.heapify(H)
+print(H)
+# Replace an element
+heapq.heapreplace(H,6)
+print(H)
+"""
+[1, 3, 5, 78, 21, 45]
+[3, 6, 5, 78, 21, 45]
+"""
+```
+
+堆是一种特殊的树。
+
+- 堆是一个完全二叉树；(完全二叉树要求，除了最后一层，其他层的节点个数都是满的，最后一层的节点都靠左排列。)
+
+- 堆中每一个节点的值都必须大于等于（或小于等于）其子树中每个节点的值。
+
+第一点，堆必须是一个完全二叉树。完全二叉树要求，除了最后一层，其他层的节点个数都是满的，最后一层的节点都靠左排列。
+
+第二点，堆中的每个节点的值必须大于等于（或者小于等于）其子树中每个节点的值。也即：堆中每个节点的值都大于等于（或者小于等于）其左右子节点的值。
+
+每个节点的值都大于等于子树中每个节点值的堆，叫作“大顶堆”，Max Heap。
+
+每个节点的值都小于等于子树中每个节点值的堆，叫作“小顶堆”，Mini Heap。
+
+![image-20200504020825274](pics/image-20200504020825274.png)
+
+![image-20200504115421404](pics/image-20200504115421404.png)
+
+其中第 1 个和第 2 个是大顶堆，第 3 个是小顶堆，第 4 个不是堆。除此之外，从图中还可以看出来，对于同一组数据，我们可以构建多种不同形态的堆。
+
+[[OK] kth-largest-element-in-a-stream](https://leetcode.com/problems/kth-largest-element-in-a-stream)：最小堆
+
+[[OK] sliding-window-maximum](https://leetcode.com/problems/sliding-window-maximum)：双端队列
+
+deque, 全名double-ended queue, 即双端队列。是一种具有队列和栈的性质的数据结构。双端队列中的元素可以从两端弹出，其限定插入和删除操作在表的两端进行。
 
 
 
 
-#### Priority Queue: 优先队列
 
-实现机制：1. [Heap  (Binary, Binomial, Fibonacci)](https://en.wikipedia.org/wiki/Heap_(data_structure)) 2. Binary Search Tree
 
-https://leetcode.com/problems/kth-largest-element-in-a-stream
-
-https://leetcode.com/problems/sliding-window-maximum
 
 
 
