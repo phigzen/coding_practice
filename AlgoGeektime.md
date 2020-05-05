@@ -477,12 +477,9 @@ def divide_conquer(self,problem, param1,param2,...):
 
 #### Practice
 
+[50. Pow(x, n)](https://leetcode.com/problems/powx-n/)
 
-
-
-
-
-
+[169. Majority Element](https://leetcode.com/problems/majority-element/)
 
 
 
