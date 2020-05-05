@@ -62,7 +62,7 @@ class Solution:
 - **中序遍历(Inorder Traversal)**：LNR（左根右），访问根结点的操作发生在遍历其左右子树之中（间）。
 - **后序遍历(Postorder Traversal)**：LRN（左右根），访问根结点的操作发生在遍历其左右子树之后。
 
-![img](../../pics/ab103822e75b5b15c615b68560cb2416.jpg)
+![img](../pics/ab103822e75b5b15c615b68560cb2416.jpg)
 
 注意：由于被访问的结点必是某子树的根，所以**N(Node）**、**L(Left subtree）**和**R(Right subtree）**又可解释为根、根的左子树和根的右子树。NLR、LNR和LRN分别又称为先根遍历、中根遍历和后根遍历。
 

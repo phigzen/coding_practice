@@ -281,7 +281,7 @@ C++: `std::unordered_map`, `std::map` |  `std::unordered_set`, `std::set`
 
 
 
-## P18 树
+## P18-21 树
 
 树，二叉树，图
 
@@ -311,9 +311,11 @@ C++: `std::unordered_map`, `std::map` |  `std::unordered_set`, `std::set`
 
 **完全二叉树**：叶子节点都在最底下两层，最后一层的叶子节点都靠左排列，并且除了最后一层，其他层的节点个数都要达到最大。
 
-#### 2. 二叉树的遍历
 
-二叉树的遍历分为三种：前序遍历、中序遍历和后序遍历。
+
+#### 二叉树的遍历
+
+二叉树的遍历分为三种：前序遍历、中序遍历和后序遍历，根据根的位置分类   。
 
 - **前序遍历(Preorder Traversal )**：NLR（根左右），访问根结点的操作发生在遍历其左右子树之前。
 - **中序遍历(Inorder Traversal)**：LNR（左根右），访问根结点的操作发生在遍历其左右子树之中（间）。
@@ -321,7 +323,7 @@ C++: `std::unordered_map`, `std::map` |  `std::unordered_set`, `std::set`
 
 ![img](pics/ab103822e75b5b15c615b68560cb2416.jpg)
 
-pseudocode：
+Pseudocode：
 
 ```java
 void preOrder(Node* root) {
@@ -344,6 +346,37 @@ void postOrder(Node* root) {
   postOrder(root->right);
   print root // 此处为伪代码，表示打印 root 节点
 }
+```
+
+
+
+```python
+class TreeTraverse:
+    def __init__(self):
+        self.traverse_path_pre = []
+        self.traverse_path_in = []
+        self.traverse_path_post = []
+ 
+    def preorder(self,root):
+        if root:
+            self.traverse_path_pre.append(root.val)
+            self.preorder(root.left)
+            self.preorder(root.right)
+        return self.traverse_path_pre
+      
+    def inorder(self,root):
+        if root:
+            self.inorder(root.left)
+            self.traverse_path_in.append(root.val)
+            self.inorder(root.right)
+        return self.traverse_path_in
+      
+    def postorder(self,root):
+        if root:
+            self.postorder(root.left)
+            self.postorder(root.right)
+            self.traverse_path_post.append(root.val)
+        return self.traverse_path_post
 ```
 
 
@@ -372,10 +405,77 @@ Recursively, 左右子树也分别是二叉搜索树。下面这些都是二叉�
 
 [235. Lowest Common Ancestor of a Binary Search Tree](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/)
 
+1. 路径交点，但是需要父节点，类似链表了。可以从父节点去分别找两个节点，确定路径。
+2. 递归
+
 [236. Lowest Common Ancestor of a Binary Tree](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/)
 
 
 
+## P22 递归和分治
+
+![image-20200505165933008](pics/image-20200505165933008.png)
+
+```python
+# 递归模板：
+def recursion(level, param1, param2, ...):
+  
+    if level > MAX_LEVEL:
+        # ...
+        return
+
+    process_data(level, data, ...)
+        
+    self.recursion(level+1, p1, ...)
+    
+    reverse_state(level)
+      
+```
+
+
+
+比如：斐波那契数列：
+
+```python
+def fib(n):
+    if n <= 1:
+        return n
+    return fib(nn-1)+fib(nn-2)
+```
+
+![image-20200505170827604](pics/image-20200505170827604.png)
+
+递归不一定是最优，中间可能有很多重复的操作。
+
+
+
+#### Divide&Conquer
+
+![image-20200505171023441](pics/image-20200505171023441.png)
+
+
+
+```python
+# 分治模板：
+def divide_conquer(self,problem, param1,param2,...):
+    if problem:
+        print_result
+        return
+    
+    data = prepare_data(problem)
+    subproblems = split_problem(problem,data)
+
+    sub1 = self.divide_conquer(subproblems[0],p1, ...)
+    sub2 = self.divide_conquer(subproblems[1],p1, ...)
+    sub3 = self.divide_conquer(subproblems[2],p1, ...)
+    # ......
+
+    result = process_result(sub1,sub2,sub3,...)
+```
+
+
+
+#### Practice
 
 
 
@@ -384,15 +484,6 @@ Recursively, 左右子树也分别是二叉搜索树。下面这些都是二叉�
 
 
 
-
-
-## 二叉树遍历
-
-![image-20190723134352808](pics/image-20190723134352808.png)
-
-
-
-## 递归和分治
 
 
 
