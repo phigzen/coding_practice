@@ -28,8 +28,6 @@ class Solution1:
 
 
 # 可以用下面这个优化：nums.index(target - x, i + 1)
-
-
 class Solution2:
     def twoSum(self, nums: List[int], target: int) -> List[int]:
         if (not nums) or (len(nums) <= 1):
@@ -47,3 +45,13 @@ class Solution3:
             if target - x in hash_map:
                 return [i, hash_map[target - x]]
             hash_map[x] = i
+
+
+class Solution4:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        for i, x in enumerate(nums[:-1]):
+            try:
+                return i, nums.index(target - x, i + 1)
+            except:
+                pass
+        return None

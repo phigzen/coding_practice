@@ -16,15 +16,17 @@ draft: true
 
 机会总是留给有准备的人！
 
-## P3
+## P1-5 基础介绍
 
-常用数据结构：
+#### 常用数据结构
+
+![image-20190717222516894](pics/image-20190717222516894.png)
+
 
 ![image-20190717222307068](pics/image-20190717222307068.png)
 
 <img src="pics/image-20200502152249863.png" alt="image-20200502152249863" style="zoom:50%;" /> 
 
-## 快速排序
 
 
 
@@ -42,13 +44,11 @@ def quick_sort(lst):
 
 
 
-## P4 算法复杂度
+#### 算法复杂度：时间和空间复杂度
 
-![image-20190717222516894](pics/image-20190717222516894.png)
+![image-20190718143647668](pics/image-20190718143647668.png)
 
-
-
-#### 时间和空间复杂度：
+![img](pics/big-o-cheat-sheet-poster.png)
 
 ![image-20190718061149516](pics/image-20190718061149516.png)
 
@@ -67,18 +67,6 @@ def quick_sort(lst):
 从递归推导时间复杂度：主定律([Master Theorem](https://en.wikipedia.org/wiki/Master_theorem_(analysis_of_algorithms)))   
 
 
-
-## P5 LeetCode
-
-```python
-class Solution:
-  def twoSum(self,nums,target):
-    hash_map = dict()
-    for i,x in enumerate(nums):
-      if target-x in hash_map:
-        return [i,hash_map[target-x]]
-      hash_map[x]=i
-```
 
 ## P6-7 数组和链表及练习
 
@@ -108,8 +96,6 @@ class Solution:
 
 ![image-20200502222511940](pics/image-20200502222511940.png)
 
-
-
 ![image-20200502222713234](pics/image-20200502222713234.png)
 
 ![image-20200502223149196](pics/image-20200502223149196.png)
@@ -128,17 +114,9 @@ class Solution:
 
 不太可能要求实现。
 
-![image-20190718143647668](pics/image-20190718143647668.png)
-
-![img](pics/big-o-cheat-sheet-poster.png)
-
-
-
 push/pop/peek
 
-
-
-##### Practice
+#### Practice
 
 1. https://leetcode.com/problems/valid-parentheses/ (括号匹配问题，用栈)
 
@@ -241,6 +219,8 @@ print(H)
 
 其中第 1 个和第 2 个是大顶堆，第 3 个是小顶堆，第 4 个不是堆。除此之外，从图中还可以看出来，对于同一组数据，我们可以构建多种不同形态的堆。
 
+#### Practice
+
 [[OK] kth-largest-element-in-a-stream](https://leetcode.com/problems/kth-largest-element-in-a-stream)：最小堆
 
 [[OK] sliding-window-maximum](https://leetcode.com/problems/sliding-window-maximum)：双端队列
@@ -249,33 +229,31 @@ deque, 全名double-ended queue, 即双端队列。是一种具有队列和栈�
 
 
 
+## P14-17 映射(Map)和集合(Set)
+
+经常用来做查询计数。
 
 
 
+哈希函数。
 
-
-
-
-
-
-
-
-
-## 映射(Map)和集合(Set)
-
-
-
-哈希函数
-
-Hash Collisions 哈希碰撞：碰到重复的情况：在重复的位置再建一个链表进行存储
+Hash Collisions 哈希碰撞：碰到重复的情况：在重复的位置再建一个链表进行存储（拉链法）
 
 ![image-20190718141413435](pics/image-20190718141413435.png)
 
- HashMap vs TreeMap
+实现方式： 
 
- HashSet vs TreeSet
+- HashMap vs TreeMap
 
-(Hashtable vs binary-search-tree)
+- HashSet vs TreeSet
+
+(Hash table vs binary-search-tree)
+
+Hash table： 无序，查询：O(1)
+
+binary-search-tree： 有序，查询：O(logN)
+
+
 
 如果对速度有要求，对顺序没要求就用Hash；如果对速度无要求，但对顺序有要求，则用Tree。 
 
@@ -289,7 +267,120 @@ C++: `std::unordered_map`, `std::map` |  `std::unordered_set`, `std::set`
 
 
 
+#### practice
+
+[242. Valid Anagram](https://leetcode.com/problems/valid-anagram/)
+
+[1. Two Sum](https://leetcode.com/problems/two-sum/)
+
+[15. 3Sum](https://leetcode.com/problems/3sum/)
+
+[18. 4Sum](https://leetcode.com/problems/4sum/)
+
 ![image-20190718143702402](pics/image-20190718143702402.png)
+
+
+
+## P18 树
+
+树，二叉树，图
+
+链表是特殊的树，图是特殊的树
+
+![image-20200505135823268](pics/image-20200505135823268.png)
+
+树的高度（Height）、深度（Depth）、层（Level）：
+
+* 节点的高度：节点到叶子节点的最长路径(边数)；
+
+* 节点的深度：根节点到这个节点所经历的边的个数；
+
+* 节点的层数：节点的深度+1
+
+* 树的高度：根节点的高度
+
+![image-20190604222331165](pics/image-20190604222331165.png)
+
+树的实现：
+
+![image-20200505140352618](pics/image-20200505140352618.png)
+
+
+
+**满二叉树** ：叶子节点全都在最底层，除了叶子节点之外，每个节点都有左右两个子节点。
+
+**完全二叉树**：叶子节点都在最底下两层，最后一层的叶子节点都靠左排列，并且除了最后一层，其他层的节点个数都要达到最大。
+
+#### 2. 二叉树的遍历
+
+二叉树的遍历分为三种：前序遍历、中序遍历和后序遍历。
+
+- **前序遍历(Preorder Traversal )**：NLR（根左右），访问根结点的操作发生在遍历其左右子树之前。
+- **中序遍历(Inorder Traversal)**：LNR（左根右），访问根结点的操作发生在遍历其左右子树之中（间）。
+- **后序遍历(Postorder Traversal)**：LRN（左右根），访问根结点的操作发生在遍历其左右子树之后。
+
+![img](pics/ab103822e75b5b15c615b68560cb2416.jpg)
+
+pseudocode：
+
+```java
+void preOrder(Node* root) {
+  if (root == null) return;
+  print root // 此处为伪代码，表示打印 root 节点
+  preOrder(root->left);
+  preOrder(root->right);
+}
+
+void inOrder(Node* root) {
+  if (root == null) return;
+  inOrder(root->left);
+  print root // 此处为伪代码，表示打印 root 节点
+  inOrder(root->right);
+}
+
+void postOrder(Node* root) {
+  if (root == null) return;
+  postOrder(root->left);
+  postOrder(root->right);
+  print root // 此处为伪代码，表示打印 root 节点
+}
+```
+
+
+
+#### 二叉搜索树：中序遍历是升序的！
+
+中序遍历二叉查找树，可以输出有序的数据序列，时间复杂度是 O(n)，非常高效。因此，二叉查找树也叫作二叉排序树。
+
+**中序遍历(Inorder Traversal)**：LNR（左根右），访问根结点的操作发生在遍历其左右子树之中（间）。
+
+binary search tree, ordered/sorted binary tree
+
+让查找更加高效，比链表更加高效了。
+
+<b>左子树</b>上所有的节点的值均小于它的根节点的值；
+
+<b>右子树</b>上所有的节点的值均大于它的根节点的值；
+
+Recursively, 左右子树也分别是二叉搜索树。下面这些都是二叉搜索树：
+
+![image-20200505143410893](pics/image-20200505143410893.png)
+
+#### Practice
+
+[98. Validate Binary Search Tree](https://leetcode.com/problems/validate-binary-search-tree/)
+
+[235. Lowest Common Ancestor of a Binary Search Tree](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/)
+
+[236. Lowest Common Ancestor of a Binary Tree](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/)
+
+
+
+
+
+
+
+
 
 
 

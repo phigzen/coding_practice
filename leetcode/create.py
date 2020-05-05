@@ -20,7 +20,7 @@ if __name__ == '__main__':
     args = parse_args()
     _dir = r'\ '.join(args.names)
     print(_dir)
-    os.system(f"mkdir {_dir} && cd {_dir} && touch solution.py && cd ..")
+    os.system(f"mkdir {_dir} && cd {_dir} && touch solution.py && echo {_dir} >> solution.py && cd ..")
 
     # for _dir in args.names:
     #     _dir = ' '.join(_dir.split())
