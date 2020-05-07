@@ -558,7 +558,21 @@ BFS、DFS (记住层数)
 
 
 
+## P31-32 剪枝
 
+
+
+
+
+
+
+
+
+#### Practice
+
+[22. Generate Parentheses](https://leetcode.com/problems/generate-parentheses/)
+
+穷举，然后去掉不合法。也可以进行优化。
 
 
 
