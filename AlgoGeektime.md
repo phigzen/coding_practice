@@ -499,7 +499,7 @@ def divide_conquer(self,problem, param1,param2,...):
 
 
 
-## P27-28 深度和广度优先搜索
+## P27-29 深度和广度优先搜索
 
 ![image-20190723235143723](pics/image-20190723235143723.png)
 
@@ -516,7 +516,7 @@ def bfs(graph,s,e):
   visited.add(s)
   while q:
     node = q.pop()
-    visited.add(node)
+    visited.add(node) # 树的话，不需要； 图的话，不要忘记这个
     process(node)
     nodes = generate_related_nodes(node)
     q.push(nodes)
@@ -546,7 +546,7 @@ def dfs(node,visited):
 
 [102. Binary Tree Level Order Traversal](https://leetcode.com/problems/binary-tree-level-order-traversal/)
 
-
+BFS、DFS (记住层数)
 
 
 
