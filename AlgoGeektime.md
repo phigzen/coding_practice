@@ -499,7 +499,7 @@ def divide_conquer(self,problem, param1,param2,...):
 
 
 
-## P27-29 深度和广度优先搜索
+## P27-30 深度和广度优先搜索
 
 ![image-20190723235143723](pics/image-20190723235143723.png)
 
@@ -547,6 +547,16 @@ def dfs(node,visited):
 [102. Binary Tree Level Order Traversal](https://leetcode.com/problems/binary-tree-level-order-traversal/)
 
 BFS、DFS (记住层数)
+
+[104. Maximum Depth of Binary Tree](https://leetcode.com/problems/maximum-depth-of-binary-tree/)
+
+BFS、DFS (记住层数)
+
+[111. Minimum Depth of Binary Tree](https://leetcode.com/problems/minimum-depth-of-binary-tree/)
+
+思路类似于，104题，最大深度。只是要注意左右子树为空的情况。易出bug。
+
+
 
 
 

@@ -1,6 +1,6 @@
 """
 # 新版本：
-python run.py 225. Implement Stack using Queues
+python new.py 225. Implement Stack using Queues
 # 旧版本：
 python create.py "20. Valid Parentheses"
 """
