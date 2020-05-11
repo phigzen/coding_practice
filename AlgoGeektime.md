@@ -580,7 +580,7 @@ BFS、DFS (记住层数)
 
 
 
-## P35 二分查找
+## P35-36 二分查找
 
 
 
@@ -607,13 +607,65 @@ while left <= right:
 
 [367. Valid Perfect Square](https://leetcode.com/problems/valid-perfect-square/)
 
+1. 二分法 2. 牛顿迭代法
 
 
 
+## P37-39 Trie树
+
+字典树。单词查找树，键树，是一种哈希树的变种。常用于统计和排序大量的字符串，但不限于字符串，所以常被搜索引擎系统用于文本词频统计。
+
+它的优点是：最大限度的减少无谓的字符串比较，查询效率比哈希表高。
+
+空间换时间。利用字符串的公共前缀来降低查询时间的开销以达到提高效率的目的。
+
+基本性质：
+
+1. 根节点不包含字符，除了根节点外每一个节点都只包含一个字符。
+2. 从根节点到某一个节点，路径上经过的字符连接起来，为该节点对应的字符串
+3. 每个节点的所有子节点包含的字符都不相同
+
+<img src="pics/image-20200512072347009.png" alt="image-20200512072347009" style="zoom:80%;" />
+
+Java实现：
+
+```Java 
+static final int ALPHABET_SIZE = 256;
+static class TrieNode {
+  TrieNode[] children = new TrieNode[ALPHABET_SIZE];
+  boolean isEndOfWord = false;
+  TrieNode(){
+    isEndOfWord = false;
+    for (int i=0;i<ALPHABET_SIZE;i++)
+      children[i] = null;
+  }
+}
+```
+
+Python实现：
+
+ ```python
+class TrieNode:
+  # Trie node class
+  def __init__(self):
+    self.children = [None] * ALPHABET_SIZE
+    
+    # isEndOfWord is True if node represent
+    # the end of the word
+    self.isEndOfWord = False
+ ```
 
 
 
+#### Practice
 
+[208. Implement Trie (Prefix Tree)](https://leetcode.com/problems/implement-trie-prefix-tree/)
+
+[79. Word Search](https://leetcode.com/problems/word-search/)
+
+[212. Word Search II](https://leetcode.com/problems/word-search-ii/)
+
+Trie+DFS
 
 
 
