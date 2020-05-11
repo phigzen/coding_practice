@@ -558,11 +558,7 @@ BFS、DFS (记住层数)
 
 
 
-## P31-32 剪枝
-
-
-
-
+## P31-34 剪枝
 
 
 
@@ -573,6 +569,49 @@ BFS、DFS (记住层数)
 [22. Generate Parentheses](https://leetcode.com/problems/generate-parentheses/)
 
 穷举，然后去掉不合法。也可以进行优化。
+
+[51. n-queens](https://leetcode.com/problems/n-queens/)
+
+[52. N-Queens2](https://leetcode.com/problems/n-queens-ii/)
+
+[36. valid-sudoku](https://leetcode.com/problems/valid-sudoku/)
+
+[37. Sudoku Solver](https://leetcode.com/problems/sudoku-solver/)
+
+
+
+## P35 二分查找
+
+
+
+要求：有序的，有边界的，可以通过索引访问。
+
+伪代码：
+
+```
+left, right = 0, len(array)-1
+while left <= right:
+    mid = (left + right)/2
+    if array[mid] == target:
+        // find the target!!
+        break or return result
+    elif array[mid] < target:
+        left = mid + 1
+    else:
+        right = mid - 1
+```
+
+#### Practice
+
+[69. Sqrt(x)](https://leetcode.com/problems/sqrtx/)
+
+[367. Valid Perfect Square](https://leetcode.com/problems/valid-perfect-square/)
+
+
+
+
+
+
 
 
 
