@@ -1,0 +1,61 @@
+130. 被围绕的区域
+给定一个二维的矩阵，包含 'X' 和 'O'（字母 O）。
+
+找到所有被 'X' 围绕的区域，并将这些区域里所有的 'O' 用 'X' 填充。
+
+示例:
+
+X X X X
+X O O X
+X X O X
+X O X X
+运行你的函数后，矩阵变为：
+
+X X X X
+X X X X
+X X X X
+X O X X
+
+class Solution(object):
+    def solve(self, board):
+        """
+        :type board: List[List[str]]
+        :rtype: None Do not return anything, modify board in-place instead.
+        """
+        if not board:
+            return board
+        safe = []
+        hight = len(board)
+        wide = len(board[0])
+        for i in range(hight):
+            if board[i][0]=='O':
+                safe.append((i,0))
+            if board[i][wide-1]=='O':
+                safe.append((i,wide-1))
+        for i in range(wide):
+            if board[0][i]=='O':
+                safe.append((0,i))
+            if board[hight-1][i]=='O':
+                safe.append((hight-1,i))
+
+        # 从safe中寻找相邻的
+        def ff(safe):
+            new_safe=[]
+            for i in range(len(safe)):
+                x,y=safe[i]
+                board[x][y]='A'
+                for mx,my in [(x+1,y),(x-1,y),(x,y+1),(x,y-1)]:
+                    if 0<mx<hight-1 and 0<my<wide-1 and board[mx][my]=='O':
+                        new_safe.append((mx,my))
+                        board[mx][my]='A'
+            return new_safe
+        while safe:
+            safe = ff(safe)
+
+        for i in range(len(board)):
+            for j in range(len(board[i])):
+                if board[i][j]=='A':
+                    board[i][j]='O'
+                elif board[i][j]=='O':
+                    board[i][j]='X'
+        return board
